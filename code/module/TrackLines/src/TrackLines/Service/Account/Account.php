@@ -23,32 +23,11 @@
  * SOFTWARE.
  */
 
-namespace TrackLines;
+namespace TrackLines\Service\Account;
 
-return [
-    'router' => [
-        'routes' => [
-            'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => [
-                    'route' => '/',
-                    'defaults' => [
-                        'controller' => 'Index',
-                    ],
-                ],
-            ],
-            'account' => [
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => [
-                    'route' => '/account[/:id]',
-                    'constraints' => [
-                        'id' => '[0-9]+',
-                    ],
-                    'defaults' => [
-                        'controller' => 'Account',
-                    ],
-                ],
-            ],
-        ],
-    ],
-];
+use TrackLines\AbstractEntity;
+
+class Account extends AbstractEntity\AccountAbstract
+{
+
+}

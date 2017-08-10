@@ -26,6 +26,8 @@
 namespace TrackLines\Service\Logging;
 
 use Monolog\Formatter\LogstashFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use TrackLines\AbstractEntity\MonoLogAbstract;
 
 class MonoLog extends MonoLogAbstract

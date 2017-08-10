@@ -9,5 +9,5 @@ if (php_sapi_name() === 'cli-server') {
     unset($path);
 }
 
-require 'init_auoloader.php';
+require 'init_autoloader.php';
 Zend\Mvc\Application::init(require 'config/application.config.php')->run();
