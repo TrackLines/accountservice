@@ -8,6 +8,8 @@ services:
             MYSQL_ROOT_PASSWORD: tracks
     account:
         image: keloran/dockerphp
+        links:
+            - database
         ports:
             - 8090:80
             - 9000
