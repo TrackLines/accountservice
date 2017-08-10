@@ -1,0 +1,18 @@
+{
+    <?php
+        if (isset($this->display_exceptions) && $this->display_exceptions):
+            if(isset($this->exception) && $this->exception instanceof Exception):
+    ?>
+                "error": "<?=$this->message; ?>",
+                "exception": "<?=get_class($this->exception);?>",
+                "<?=$this->exception->getFile() ?>": "<?=$this->exception->getLine() ?>",
+                "message": "<?=$this->exception->getMessage() ?>"
+    <?php
+            endif;
+        else:
+    ?>
+            "error": "<?=$this->message; ?>"
+    <?php
+        endif;
+    ?>
+}

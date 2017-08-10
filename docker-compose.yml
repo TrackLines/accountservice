@@ -7,8 +7,9 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: tracks
     account:
-        image: php:apache
+        image: keloran/dockerphp
         ports:
             - 8090:80
         volumes:
-            - ./code:/var/www/html
+            - ./code:/var/www
+            - ./code/public:/var/www/html
