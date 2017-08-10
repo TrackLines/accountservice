@@ -59,7 +59,7 @@ class MonoLogAbstract
     /**
      * @return \Monolog\Logger
      */
-    public function getLogger()
+    public function getLogger() : \Monolog\Logger
     {
         return $this->logger;
     }
@@ -67,7 +67,7 @@ class MonoLogAbstract
     /**
      * @param \Monolog\Logger $logger
      */
-    public function setLogger($logger)
+    public function setLogger(\Monolog\Logger $logger)
     {
         $this->logger = $logger;
     }
@@ -75,7 +75,7 @@ class MonoLogAbstract
     /**
      * @return string
      */
-    public function getHost()
+    public function getHost() : string
     {
         return $this->host;
     }
@@ -83,7 +83,7 @@ class MonoLogAbstract
     /**
      * @param string $host
      */
-    public function setHost($host)
+    public function setHost(string $host)
     {
         $this->host = $host;
     }
@@ -91,7 +91,7 @@ class MonoLogAbstract
     /**
      * @return int
      */
-    public function getPort()
+    public function getPort() : int
     {
         return $this->port;
     }
@@ -99,7 +99,7 @@ class MonoLogAbstract
     /**
      * @param int $port
      */
-    public function setPort($port)
+    public function setPort(int $port)
     {
         $this->port = $port;
     }
@@ -107,7 +107,7 @@ class MonoLogAbstract
     /**
      * @return string
      */
-    public function getUsername()
+    public function getUsername() : string
     {
         return $this->username;
     }
@@ -115,7 +115,7 @@ class MonoLogAbstract
     /**
      * @param string $username
      */
-    public function setUsername($username)
+    public function setUsername(string $username)
     {
         $this->username = $username;
     }
@@ -123,7 +123,7 @@ class MonoLogAbstract
     /**
      * @return string
      */
-    public function getPassword()
+    public function getPassword() : string
     {
         return $this->password;
     }
@@ -131,7 +131,7 @@ class MonoLogAbstract
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword(string $password)
     {
         $this->password = $password;
     }

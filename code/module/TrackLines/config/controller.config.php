@@ -29,9 +29,10 @@ return [
     'controllers' => [
         'invokables' => [
             'Index' => Controller\IndexController::class,
+            'Account' => Controller\AccountController::class,
         ],
         'factories' => [
-            'Account' => ControllerFactory\AccountController::class,
-        ]
+
+        ],
     ],
 ];

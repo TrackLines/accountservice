@@ -44,7 +44,7 @@ class IndexController extends AbstractRestfulController
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return JsonModel
      */
     public function get($id)
@@ -70,7 +70,7 @@ class IndexController extends AbstractRestfulController
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return JsonModel
      */
     public function delete($id)
@@ -79,7 +79,7 @@ class IndexController extends AbstractRestfulController
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @param mixed $data
      * @return JsonModel
      */
