@@ -52,7 +52,7 @@ class Module implements ServiceProviderInterface
         ];
 
         foreach ($configs as $configFile) {
-            $config = ArrayUtils::merge($config, $configFile);
+            $config = ArrayUtils::merge($config, include $configFile);
         }
 
         return $config;
