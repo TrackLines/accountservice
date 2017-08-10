@@ -11,3 +11,4 @@ vendor
 phpcbf.phar
 phpcs.phar
 logs
+composer.phar
