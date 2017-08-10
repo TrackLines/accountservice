@@ -11,10 +11,10 @@
     "homepage": "http://accountservice.tracklin.es",
     "require": {
         "php": ">=7.0",
-        "zendframework/zendframework": "~2.5",
-        "guzzlehttp/guzzle": "^6.2",
-        "monolog/monolog": "^1.21",
-        "phpunit/phpunit": "5.7",
-        "aws/aws-sdk-php": "^3.19"
+        "zendframework/zendframework": "3.0",
+        "guzzlehttp/guzzle": "6.3",
+        "monolog/monolog": "1.23",
+        "phpunit/phpunit": "6.3",
+        "aws/aws-sdk-php": "3.32.6"
     }
 }

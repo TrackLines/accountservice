@@ -30,8 +30,15 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\ArrayUtils;
 
+/**
+ * Class Module
+ * @package TrackLines
+ */
 class Module implements ServiceProviderInterface
 {
+    /**
+     * @param MvcEvent $e
+     */
     public function onBootStrap(MvcEvent $e)
     {
         $application            = $e->getApplication();
@@ -40,7 +47,10 @@ class Module implements ServiceProviderInterface
         $moduleRouteListener->attach($eventManager);
     }
 
-    public function getConfig()
+    /**
+     * @return array
+     */
+    public function getConfig() : array
     {
         $config = [];
 
@@ -58,12 +68,18 @@ class Module implements ServiceProviderInterface
         return $config;
     }
 
-    public function getServiceConfig()
+    /**
+     * @return array
+     */
+    public function getServiceConfig() : array
     {
         return [];
     }
 
-    public function getAutoloaderConfig()
+    /**
+     * @return array
+     */
+    public function getAutoloaderConfig() : array
     {
         return [
             'Zend\Loader\StandardAutoloader' => [

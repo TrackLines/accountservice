@@ -30,8 +30,15 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use TrackLines\AbstractEntity\MonoLogAbstract;
 
+/**
+ * Class MonoLog
+ * @package TrackLines\Service\Logging
+ */
 class MonoLog extends MonoLogAbstract
 {
+    /**
+     * MonoLog constructor.
+     */
     public function __construct()
     {
         $logger = new Logger('TrackLines');
@@ -42,7 +49,11 @@ class MonoLog extends MonoLogAbstract
         $this->setLogger($logger);
     }
 
-    public function error($message, $data = null)
+    /**
+     * @param string $message
+     * @param mixed $data
+     */
+    public function error(string $message, $data = null)
     {
         if ($data) {
             if (!is_array($data)) {

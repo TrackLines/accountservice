@@ -33,8 +33,8 @@ namespace TrackLines\Service\Config;
 interface ConfigInterface
 {
     /**
-     * @param $configName
+     * @param string $configName
      * @return null|object
      */
-    public function getS3Config($configName);
+    public function getS3Config(string $configName);
 }

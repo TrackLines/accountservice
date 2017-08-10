@@ -48,7 +48,7 @@ class BaseController extends AbstractActionController
     /**
      * @return ServiceLocatorInterface
      */
-    public function getServiceLocator()
+    public function getServiceLocator() : ServiceLocatorInterface
     {
         return $this->serviceLocator;
     }

@@ -57,7 +57,7 @@ class Validator extends ValidatorAbstract
     /**
      * @return bool
      */
-    private function validateToken()
+    private function validateToken() : bool
     {
         if ($token = $this->getToken()) {
             if ($tokens = $this->getTokens()) {

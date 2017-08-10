@@ -43,7 +43,7 @@ class Config extends ConfigAbstract implements ConfigInterface
     /**
      * @return \Monolog\Logger
      */
-    public function getLogger()
+    public function getLogger() : \Monolog\Logger
     {
         return $this->logger;
     }
@@ -51,16 +51,16 @@ class Config extends ConfigAbstract implements ConfigInterface
     /**
      * @param \Monolog\Logger $logger
      */
-    public function setLogger($logger)
+    public function setLogger(\Monolog\Logger $logger)
     {
         $this->logger = $logger;
     }
 
     /**
-     * @param $configName
+     * @param string $configName
      * @return null|object
      */
-    public function getS3Config($configName)
+    public function getS3Config(string $configName)
     {
         try {
             $s3creds    = false;
