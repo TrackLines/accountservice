@@ -33,6 +33,7 @@
 namespace TracklinesTest\Controller;
 
 use Tracklines\Controller\AccountController;
+use Zend\Stdlib\Parameters;
 
 /**
  * Class AccountControllerTest
@@ -53,6 +54,33 @@ class AccountControllerTest extends BaseTest
         $this->assertMatchedRouteName("account");
     }
 
+    /**
+     *
+     */
+    public function testCreateAccount()
+    {
+        $request = $this->getRequest();
+//        $headers = $request->getHeaders();
+//        $headers->addHeaderLine("token", "bob");
+        $request->setMethod("POST")
+            ->setPost(new Parameters([
+                "username" => "bob",
+                "password" => "bob",
+                "email" => "bob@bob.bob",
+                "contactNumber" => "0",
+                "parentId" => 0
+            ]));
+        $this->dispatch("/account");
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     *
+     */
     public function testInvalidRouteDidNotCrash()
     {
         $this->dispatch("/account/bob", "GET");

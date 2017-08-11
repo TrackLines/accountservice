@@ -34,6 +34,7 @@ namespace Tracklines\Controller;
 
 use Tracklines\Service\Config\Config;
 use Tracklines\Service\Token\Validator;
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 
@@ -42,6 +43,11 @@ class AccountController extends AbstractRestfulController
     private function returnBlank()
     {
         return new JsonModel();
+    }
+
+    private function returnError()
+    {
+        return new JsonModel(["message" => "invalid token"]);
     }
 
     public function get($id)
@@ -56,18 +62,24 @@ class AccountController extends AbstractRestfulController
 
     public function create($data)
     {
-        $token = $this->getRequest()->getHeader("token")->getFieldValue();
 
-        $config = new Config();
-        $tokens = $config->getS3Config("tokens");
+        $token = $this->getRequest()->getHeader("token");
+        if ($token) {
+            $tokenValue = $token->getFieldValue();
 
-        $validator = new Validator();
-        $validator->setTokens($tokens);
-        $validator->setToken($token);
-        if ($validator->validateToken()) {
-            die("valid");
+            $config = new Config();
+            $tokens = $config->getS3Config("tokens");
+
+            if ($tokens) {
+                $validator = new Validator();
+                $validator->setTokens($tokens);
+                $validator->setToken($tokenValue);
+                if ($validator->validateToken()) {
+                    die("valid");
+                }
+            }
         }
 
-        die("invalid");
+        return $this->returnError();
     }
 }
