@@ -63,22 +63,27 @@ class AccountController extends AbstractRestfulController
 
     public function create($data)
     {
-        $token = $this->getRequest()->getHeader("token");
-        if ($token) {
-            $tokenValue = $token->getFieldValue();
-            $config = new Config();
-            $tokens = $config->getS3Config("tokens");
+        $tokenName = $this->getRequest()->getHeader("tokenName");
+        if ($tokenName) {
+            $tokenValue = $this->getRequest()->getHeader("tokenValue");
+            if ($tokenValue) {
+                $tokenNameValue     = $tokenName->getFieldValue();
+                $tokenValueValue    = $tokenValue->getFieldValue();
 
-            if ($tokens) {
-                $validator = new Validator();
-                $validator->setTokens($tokens);
-                $validator->setToken("account");
-                $validator->setTokenValue($tokenValue);
+                $config = new Config();
+                $tokens = $config->getS3Config("tokens");
 
-                if ($validator->validateToken()) {
-                    return $this->returnBlank();
+                if ($tokens) {
+                    $validator = new Validator();
+                    $validator->setTokens($tokens);
+                    $validator->setToken($tokenNameValue);
+                    $validator->setTokenValue($tokenValueValue);
+                    if ($validator->validateToken()) {
+                        return $this->returnBlank();
+                    }
                 }
             }
+
         }
 
         return $this->returnError();
