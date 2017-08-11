@@ -1,23 +1,31 @@
 version: "3"
 services:
-    database:
-        image: mysql:latest
-        ports:
-            - 3306:3306
-        environment:
-            MYSQL_ROOT_PASSWORD: tracks
-    account:
-        image: keloran/dockerphp
-        links:
-            - database
-        ports:
-            - 8090:80
-            - 9000
-        volumes:
-            - ./code/public:/var/www/html
-            - ./code:/var/www
-        environment:
-              XDEBUG_CONFIG: remote_enable=true
-              XDEBUG_CONFIG: remote_host=10.254.254.254
-              XDEBUG_CONFIG: xdebug.remote_enable=true
-              XDEBUG_CONFIG: xdebug.remote_host=10.254.254.254
+  database:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: tracks
+  account:
+    image: keloran/dockerphp
+    links:
+      - database
+    ports:
+      - 8090:80
+      - 9000
+    volumes:
+      - ./code/public:/var/www/html
+      - ./code:/var/www
+    environment:
+      XDEBUG_CONFIG: remote_enable=true
+      XDEBUG_CONFIG: remote_host=10.254.254.254
+      XDEBUG_CONFIG: xdebug.remote_enable=true
+      XDEBUG_CONFIG: xdebug.remote_host=10.254.254.254
+      DATABASE_ADDRESS: database
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: tracks
+      S3_REGION: invalid
+      S3_KEY: invalid
+      S3_SECRET: invalid
+      S3_BUCKET: invalid
+      S3_FILE: invalid

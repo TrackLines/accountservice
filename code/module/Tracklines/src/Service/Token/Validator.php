@@ -23,51 +23,20 @@
  * SOFTWARE.
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: hootonm
- * Date: 11/08/2017
- * Time: 13:19
- */
+namespace Tracklines\Service\Token;
 
-namespace Tracklines\Controller;
-
-use Tracklines\Service\Config\Config;
-use Tracklines\Service\Token\Validator;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
-
-class AccountController extends AbstractRestfulController
+class Validator extends ValidatorAbstract
 {
-    private function returnBlank()
+    public function validateToken()
     {
-        return new JsonModel();
-    }
-
-    public function get($id)
-    {
-        return $this->returnBlank();
-    }
-
-    public function getList()
-    {
-        return $this->returnBlank();
-    }
-
-    public function create($data)
-    {
-        $token = $this->getRequest()->getHeader("token")->getFieldValue();
-
-        $config = new Config();
-        $tokens = $config->getS3Config("tokens");
-
-        $validator = new Validator();
-        $validator->setTokens($tokens);
-        $validator->setToken($token);
-        if ($validator->validateToken()) {
-            die("valid");
+        if ($token = $this->getToken()) {
+            if ($tokens = $this->getTokens()) {
+                if (isset($tokens->{$token})) {
+                    return true;
+                }
+            }
         }
 
-        die("invalid");
+        return false;
     }
 }
