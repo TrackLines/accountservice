@@ -23,51 +23,39 @@
  * SOFTWARE.
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: hootonm
- * Date: 11/08/2017
- * Time: 13:19
- */
 
-namespace Tracklines\Controller;
+namespace Tracklines\Service\Config;
 
-use Tracklines\Service\Config\Config;
-use Tracklines\Service\Token\Validator;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
+use Aws\S3\S3Client;
 
-class AccountController extends AbstractRestfulController
+class Config implements ConfigInterface
 {
-    private function returnBlank()
+    public function getS3Config(string $configName)
     {
-        return new JsonModel();
-    }
+        try {
+            $s3creds    = [
+                "region"        => getenv("S3_REGION"),
+                "version"       => "latest",
+                "credentials"   => [
+                    "key"       => getenv("S3_KEY"),
+                    "secret"    => getenv("S3_SECRET"),
+                ],
+            ];
+            $s3file     = [
+                "Bucket"    => getenv("S3_BUCKET"),
+                "Key"       => getenv("S3_FILE"),
+            ];
 
-    public function get($id)
-    {
-        return $this->returnBlank();
-    }
+            $s3         = new S3Client($s3creds);
+            $result     = $s3->getObject($s3file);
+            $body       = (string)$result['Body'];
+            $bodyObj    = \GuzzleHttp\json_decode($body);
 
-    public function getList()
-    {
-        return $this->returnBlank();
-    }
-
-    public function create($data)
-    {
-        $token = $this->getRequest()->getHeader("token")->getFieldValue();
-
-        $config = new Config();
-        $tokens = $config->getS3Config("tokens");
-
-        $validator = new Validator();
-        $validator->setTokens($tokens);
-        $validator->setToken($token);
-        if ($validator->validateToken()) {
-            die("valid");
+            return $bodyObj->{$configName};
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
         }
 
-        die("invalid");
+        return null;
     }
 }
