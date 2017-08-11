@@ -28,8 +28,30 @@ namespace Tracklines\Service\Config;
 
 use Aws\S3\S3Client;
 
+/**
+ * Class Config
+ * @package Tracklines\Service\Config
+ */
 class Config implements ConfigInterface
 {
+    /**
+     * @return \stdClass
+     */
+    public function getDatabaseConfig()
+    {
+        $returnObj = new \stdClass();
+        $returnObj->username = getenv("DATABASE_USERNAME");
+        $returnObj->password = getenv("DATABASE_PASSWORD");
+        $returnObj->address = getenv("DATABASE_ADDRESS");
+        $returnObj->database = "account";
+
+        return $returnObj;
+    }
+
+    /**
+     * @param string $configName
+     * @return null
+     */
     public function getS3Config(string $configName)
     {
         try {
