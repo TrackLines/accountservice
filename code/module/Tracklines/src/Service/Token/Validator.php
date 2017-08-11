@@ -31,8 +31,10 @@ class Validator extends ValidatorAbstract
     {
         if ($token = $this->getToken()) {
             if ($tokens = $this->getTokens()) {
-                if (isset($tokens->{$token})) {
-                    return true;
+                if ($tokenValue = isset($tokens->{$token})) {
+                    if ($tokenValue == $this->getTokenValue()) {
+                        return true;
+                    }
                 }
             }
         }

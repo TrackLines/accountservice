@@ -47,6 +47,7 @@ class AccountController extends AbstractRestfulController
 
     private function returnError()
     {
+        $this->getResponse()->setStatusCode(405);
         return new JsonModel(["message" => "invalid token"]);
     }
 
@@ -62,20 +63,20 @@ class AccountController extends AbstractRestfulController
 
     public function create($data)
     {
-
         $token = $this->getRequest()->getHeader("token");
         if ($token) {
             $tokenValue = $token->getFieldValue();
-
             $config = new Config();
             $tokens = $config->getS3Config("tokens");
 
             if ($tokens) {
                 $validator = new Validator();
                 $validator->setTokens($tokens);
-                $validator->setToken($tokenValue);
+                $validator->setToken("account");
+                $validator->setTokenValue($tokenValue);
+
                 if ($validator->validateToken()) {
-                    die("valid");
+                    return $this->returnBlank();
                 }
             }
         }

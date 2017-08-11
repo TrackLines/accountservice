@@ -60,8 +60,8 @@ class AccountControllerTest extends BaseTest
     public function testCreateAccount()
     {
         $request = $this->getRequest();
-//        $headers = $request->getHeaders();
-//        $headers->addHeaderLine("token", "bob");
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("token", "bob");
         $request->setMethod("POST")
             ->setPost(new Parameters([
                 "username" => "bob",

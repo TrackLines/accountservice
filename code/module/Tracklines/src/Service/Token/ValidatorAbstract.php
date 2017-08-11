@@ -38,9 +38,14 @@ abstract class ValidatorAbstract
     private $token;
 
     /**
-     * @var array
+     * @var \stdClass
      */
     private $tokens;
+
+    /**
+     * @var string
+     */
+    private $tokenValue;
 
     /**
      * @return string
@@ -59,19 +64,35 @@ abstract class ValidatorAbstract
     }
 
     /**
-     * @return array
+     * @return \stdClass
      */
-    public function getTokens(): array
+    public function getTokens(): \stdClass
     {
         return $this->tokens;
     }
 
     /**
-     * @param array $tokens
+     * @param \stdClass $tokens
      */
-    public function setTokens(array $tokens)
+    public function setTokens(\stdClass $tokens)
     {
         $this->tokens = $tokens;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTokenValue(): string
+    {
+        return $this->tokenValue;
+    }
+
+    /**
+     * @param string $tokenValue
+     */
+    public function setTokenValue(string $tokenValue)
+    {
+        $this->tokenValue = $tokenValue;
     }
 
 
