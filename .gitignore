@@ -12,3 +12,5 @@ phpcbf.phar
 phpcs.phar
 logs
 composer.phar
+development.config.php
+code/data/cache/*.php

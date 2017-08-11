@@ -23,20 +23,38 @@
  * SOFTWARE.
  */
 
+
 return [
-    'modules' => require __DIR__ . '/modules.config.php',
-    'module_listener_options' => [
-        'module_paths' => [
-            './module',
-            './vendor',
+    'zenddevelopertools' => [
+        'profiler' => [
+            'enabled' => true,
+            'strict' => true,
+            'flush_early' => false,
+            'cache_dir' => 'data/cache',
+            'matcher' => [
+
+            ],
+            'collectors' => [
+
+            ],
         ],
-        'config_glob_paths' => [
-            realpath(__DIR__).'/autoload/{{,*.}global,{,*.}local}.php',
+        'events' => [
+            'enabled' => true,
+            'collectors' => [
+
+            ],
+            'identifiers' => [
+
+            ],
         ],
-        'config_cache_enabled' => true,
-        'config_cache_key' => 'application.config.cache',
-        'module_map_cache_enabled' => true,
-        'module_map_cache_key' => 'application.module.cache',
-        'cache_dir' => 'data/cache',
+        'toolbar' => [
+            'enabled' => true,
+            'auto_hide' => false,
+            'position' => 'bottom',
+            'version_check' => false,
+            'entities' => [
+
+            ],
+        ],
     ],
 ];
