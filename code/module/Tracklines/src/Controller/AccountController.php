@@ -23,37 +23,32 @@
  * SOFTWARE.
  */
 
-
-namespace TracklinesTest\Controller;
-
-use Tracklines\Controller\IndexController;
-
 /**
- * Class IndexControllerTest
- * @package TracklinesTest\Controller
+ * Created by IntelliJ IDEA.
+ * User: hootonm
+ * Date: 11/08/2017
+ * Time: 13:19
  */
-class IndexControllerTest extends BaseTest
-{
 
-    /**
-     *
-     */
-    public function testIndexActionCanBeAccessed()
+namespace Tracklines\Controller;
+
+use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\View\Model\JsonModel;
+
+class AccountController extends AbstractRestfulController
+{
+    private function returnBlank()
     {
-        $this->dispatch('/', "GET");
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName('tracklines');
-        $this->assertControllerName(IndexController::class);
-        $this->assertControllerClass('IndexController');
-        $this->assertMatchedRouteName('home');
+        return new JsonModel();
     }
 
-    /**
-     *
-     */
-    public function testInvalidRouteDoesNotCrash()
+    public function get($id)
     {
-        $this->dispatch('/invalid/route', 'GET');
-        $this->assertResponseStatusCode(404);
+        return $this->returnBlank();
+    }
+
+    public function getList()
+    {
+        return $this->returnBlank();
     }
 }

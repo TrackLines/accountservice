@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MIT License
  *
@@ -23,37 +24,38 @@
  * SOFTWARE.
  */
 
-
 namespace TracklinesTest\Controller;
 
-use Tracklines\Controller\IndexController;
+use Zend\Stdlib\ArrayUtils;
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
- * Class IndexControllerTest
+ * Class BaseTest
+ * This is just for not having to repeat the same code, its test is to stop warnings
  * @package TracklinesTest\Controller
  */
-class IndexControllerTest extends BaseTest
-{
-
+class BaseTest extends AbstractHttpControllerTestCase {
     /**
      *
      */
-    public function testIndexActionCanBeAccessed()
+    public function setUp()
     {
-        $this->dispatch('/', "GET");
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName('tracklines');
-        $this->assertControllerName(IndexController::class);
-        $this->assertControllerClass('IndexController');
-        $this->assertMatchedRouteName('home');
+        $configOverrides = [];
+
+        $this->setApplicationConfig(ArrayUtils::merge(
+            include __DIR__ . '/../../../../config/application.config.php',
+            $configOverrides
+        ));
+
+        parent::setUp();
     }
 
     /**
      *
      */
-    public function testInvalidRouteDoesNotCrash()
+    public function testBase()
     {
-        $this->dispatch('/invalid/route', 'GET');
-        $this->assertResponseStatusCode(404);
+        $result = true;
+        $this->assertTrue($result);
     }
 }
