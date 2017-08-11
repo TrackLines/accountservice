@@ -23,37 +23,39 @@
  * SOFTWARE.
  */
 
+/**
+ * Created by IntelliJ IDEA.
+ * User: hootonm
+ * Date: 11/08/2017
+ * Time: 13:13
+ */
 
 namespace TracklinesTest\Controller;
 
-use Tracklines\Controller\IndexController;
+use Tracklines\Controller\AccountController;
 
 /**
- * Class IndexControllerTest
+ * Class AccountControllerTest
  * @package TracklinesTest\Controller
  */
-class IndexControllerTest extends BaseTest
+class AccountControllerTest extends BaseTest
 {
-
     /**
      *
      */
-    public function testIndexActionCanBeAccessed()
+    public function testActionIndexCanBeAccessed()
     {
-        $this->dispatch('/', "GET");
+        $this->dispatch("/account", "GET");
         $this->assertResponseStatusCode(200);
-        $this->assertModuleName('tracklines');
-        $this->assertControllerName(IndexController::class);
-        $this->assertControllerClass('IndexController');
-        $this->assertMatchedRouteName('home');
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
     }
 
-    /**
-     *
-     */
-    public function testInvalidRouteDoesNotCrash()
+    public function testInvalidRouteDidNotCrash()
     {
-        $this->dispatch('/invalid/route', 'GET');
+        $this->dispatch("/account/bob", "GET");
         $this->assertResponseStatusCode(404);
     }
 }
