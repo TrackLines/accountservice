@@ -14,8 +14,8 @@ services:
             - 8090:80
             - 9000
         volumes:
-            - ./code:/var/www
             - ./code/public:/var/www/html
+            - ./code:/var/www
         environment:
               XDEBUG_CONFIG: remote_enable=true
               XDEBUG_CONFIG: remote_host=10.254.254.254

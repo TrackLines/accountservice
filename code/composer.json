@@ -1,20 +1,46 @@
 {
-    "name": "accountservice",
-    "description": "AccountService for TrackLin.es",
-    "license": "MIT",
-    "keywords": [
-        "framework",
-        "accountservice",
-        "tracklines",
-        "zf2"
-    ],
-    "homepage": "http://accountservice.tracklin.es",
-    "require": {
-        "php": ">=7.0",
-        "zendframework/zendframework": "3.0",
-        "guzzlehttp/guzzle": "6.3",
-        "monolog/monolog": "1.23",
-        "phpunit/phpunit": "6.3",
-        "aws/aws-sdk-php": "3.32.6"
+  "name": "accountservice",
+  "description": "AccountService for TrackLin.es",
+  "license": "MIT",
+  "keywords": [
+    "framework",
+    "accountservice",
+    "tracklines",
+    "zf2"
+  ],
+  "homepage": "http://accountservice.tracklin.es",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Tracklines\\": "module/Tracklines/src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TracklinesTest\\": "module/Tracklines/test/"
+    }
+  },
+  "require": {
+    "php": ">=7.0",
+    "guzzlehttp/guzzle": "6.3",
+    "phpunit/phpunit": "6.3",
+    "aws/aws-sdk-php": "3.32.6",
+    "zendframework/zend-component-installer": "1.0",
+    "zendframework/zend-mvc": "3.0.1",
+    "zfcampus/zf-development-mode": "3.0",
+    "zendframework/zend-test": "3.1.0"
+  },
+  "extra": {
+
+  },
+  "scripts": {
+    "cs-check": "phpcs",
+    "cs-fix": "phpcbf",
+    "development-disable": "zf-development-mode disable",
+    "development-enable": "zf-development-mode enable",
+    "development-status": "zf-development-mode status",
+    "test": "phpunit",
+    "serve": "php -S 0.0.0.0:80 -t public public/index.php"
+  }
 }

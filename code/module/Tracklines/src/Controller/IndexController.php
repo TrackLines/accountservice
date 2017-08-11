@@ -23,20 +23,23 @@
  * SOFTWARE.
  */
 
-return [
-    'modules' => require __DIR__ . '/modules.config.php',
-    'module_listener_options' => [
-        'module_paths' => [
-            './module',
-            './vendor',
-        ],
-        'config_glob_paths' => [
-            realpath(__DIR__).'/autoload/{{,*.}global,{,*.}local}.php',
-        ],
-        'config_cache_enabled' => true,
-        'config_cache_key' => 'application.config.cache',
-        'module_map_cache_enabled' => true,
-        'module_map_cache_key' => 'application.module.cache',
-        'cache_dir' => 'data/cache',
-    ],
-];
+
+namespace Tracklines\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+
+/**
+ * Class IndexController
+ * @package Tracklines\Controller
+ */
+class IndexController extends AbstractActionController
+{
+    /**
+     * @return ViewModel
+     */
+    public function indexAction()
+    {
+        return new ViewModel();
+    }
+}

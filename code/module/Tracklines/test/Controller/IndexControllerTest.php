@@ -24,27 +24,52 @@
  */
 
 
-use Zend\Mvc\Application;
+namespace TracklinesTest\Controller;
+
+use Tracklines\Controller\IndexController;
 use Zend\Stdlib\ArrayUtils;
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-chdir(dirname(__DIR__));
-if (php_sapi_name() === 'cli-server') {
-    $path = realpath(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-    if (__FILE__ !== $path && is_file($path)) {
-        return false;
+/**
+ * Class IndexControllerTest
+ * @package TracklinesTest\Controller
+ */
+class IndexControllerTest extends AbstractHttpControllerTestCase
+{
+    /**
+     *
+     */
+    public function setUp()
+    {
+        $configOverrides = [];
+
+        $this->setApplicationConfig(ArrayUtils::merge(
+            include __DIR__ . '/../../../../config/application.config.php',
+            $configOverrides
+        ));
+
+        parent::setUp();
     }
-    unset($path);
+
+    /**
+     *
+     */
+    public function testIndexActionCanBeAccessed()
+    {
+        $this->dispatch('/', "GET");
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName('tracklines');
+        $this->assertControllerName(IndexController::class);
+        $this->assertControllerClass('IndexController');
+        $this->assertMatchedRouteName('home');
+    }
+
+    /**
+     *
+     */
+    public function testInvalidRouteDoesNotCrash()
+    {
+        $this->dispatch('/invalid/route', 'GET');
+        $this->assertResponseStatusCode(404);
+    }
 }
-
-include __DIR__ . '/../vendor/autoload.php';
-
-if (!class_exists(Application::class)) {
-    throw new RuntimeException(("ZF3 not installed"));
-}
-
-$appConfig = require __DIR__ . '/../config/application.config.php';
-if (file_exists(__DIR__ . '/../config/development.config.php')) {
-    $appConfig = ArrayUtils::merge($appConfig, require __DIR__ . '/../config/development.config.php');
-}
-
-Application::init($appConfig)->run();
