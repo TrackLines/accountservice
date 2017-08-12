@@ -37,7 +37,7 @@ class Config implements ConfigInterface
     /**
      * @return \stdClass
      */
-    public function getDatabaseConfig()
+    public function getDatabaseConfig() : \stdClass
     {
         $returnObj = new \stdClass();
         $returnObj->username = getenv("DATABASE_USERNAME");

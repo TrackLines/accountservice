@@ -32,37 +32,97 @@
 
 namespace Tracklines\Controller;
 
+use Tracklines\Service\Account\Account;
 use Tracklines\Service\Config\Config;
 use Tracklines\Service\Token\Validator;
-use Zend\Json\Json;
+use Tracklines\Utils\Utilities;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 
+/**
+ * Class AccountController
+ * @package Tracklines\Controller
+ */
 class AccountController extends AbstractRestfulController
 {
-    private function returnBlank()
-    {
-        return new JsonModel();
-    }
-
-    private function returnError()
-    {
-        $this->getResponse()->setStatusCode(405);
-        return new JsonModel(["message" => "invalid token"]);
-    }
-
+    /**
+     * @param int $id
+     * @return JsonModel
+     */
     public function get($id)
     {
-        return $this->returnBlank();
+        $utilities = new Utilities();
+
+        $tokenName = $this->getRequest()->getHeader("tokenName");
+        if ($tokenName) {
+            $tokenValue = $this->getRequest()->getHeader("tokenValue");
+            if ($tokenValue) {
+                $tokenNameValue = $tokenName->getFieldValue();
+                $tokenValueValue = $tokenValue->getFieldValue();
+
+                $config = new Config();
+                $tokens = $config->getS3Config("tokens");
+
+                if ($tokens) {
+                    $validator = new Validator();
+                    $validator->setTokens($tokens);
+                    $validator->setToken($tokenNameValue);
+                    $validator->setTokenValue($tokenValueValue);
+                    if ($validator->validateToken()) {
+                        return $utilities->blankJson();
+                    }
+                }
+            }
+        }
+
+
+        $this->getResponse()->setStatusCode(400);
+        return $utilities->returnError("Invalid Token");
     }
 
+    /**
+     * Get without id
+     * @return JsonModel
+     */
     public function getList()
     {
-        return $this->returnBlank();
+        $utilities = new Utilities();
+
+        $tokenName = $this->getRequest()->getHeader("tokenName");
+        if ($tokenName) {
+            $tokenValue = $this->getRequest()->getHeader("tokenValue");
+            if ($tokenValue) {
+                $tokenNameValue = $tokenName->getFieldValue();
+                $tokenValueValue = $tokenValue->getFieldValue();
+
+                $config = new Config();
+                $tokens = $config->getS3Config("tokens");
+
+                if ($tokens) {
+                    $validator = new Validator();
+                    $validator->setTokens($tokens);
+                    $validator->setToken($tokenNameValue);
+                    $validator->setTokenValue($tokenValueValue);
+                    if ($validator->validateToken()) {
+                        return $utilities->blankJson();
+                    }
+                }
+            }
+        }
+
+
+        $this->getResponse()->setStatusCode(400);
+        return $utilities->returnError("Invalid Token");
     }
 
+    /**
+     * @param array $data
+     * @return JsonModel
+     */
     public function create($data)
     {
+        $utilities = new Utilities();
+
         $tokenName = $this->getRequest()->getHeader("tokenName");
         if ($tokenName) {
             $tokenValue = $this->getRequest()->getHeader("tokenValue");
@@ -79,13 +139,69 @@ class AccountController extends AbstractRestfulController
                     $validator->setToken($tokenNameValue);
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
-                        return $this->returnBlank();
+                        $dataObject = $utilities->convertToObject($data);
+
+                        $account = new Account();
+                        $account->setContactNumber($dataObject->contactDetails->number);
+                        $account->setEmail($dataObject->contactDetails->email);
+                        $account->setParentId($dataObject->parentId);
+                        $account->setUsername($dataObject->credentials->username);
+                        $account->setPassword($dataObject->credentials->password);
+
+                        return new JsonModel($account->create());
                     }
                 }
             }
 
         }
 
-        return $this->returnError();
+        $this->getResponse()->setStatusCode(400);
+        return $utilities->returnError("Invalid Token");
+    }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return JsonModel
+     */
+    public function update($id, $data)
+    {
+        $utilities = new Utilities();
+
+        $tokenName = $this->getRequest()->getHeader("tokenName");
+        if ($tokenName) {
+            $tokenValue = $this->getRequest()->getHeader("tokenValue");
+            if ($tokenValue) {
+                $tokenNameValue     = $tokenName->getFieldValue();
+                $tokenValueValue    = $tokenValue->getFieldValue();
+
+                $config = new Config();
+                $tokens = $config->getS3Config("tokens");
+
+                if ($tokens) {
+                    $validator = new Validator();
+                    $validator->setTokens($tokens);
+                    $validator->setToken($tokenNameValue);
+                    $validator->setTokenValue($tokenValueValue);
+                    if ($validator->validateToken()) {
+                        $dataObject = $utilities->convertToObject($data);
+
+                        $account = new Account();
+                        $account->setContactNumber($dataObject->contactDetails->number);
+                        $account->setEmail($dataObject->contactDetails->email);
+                        $account->setParentId($dataObject->parentId);
+                        $account->setUsername($dataObject->credentials->username);
+                        $account->setPassword($dataObject->credentials->password);
+                        $account->setClientId($id);
+
+                        return new JsonModel($account->update());
+                    }
+                }
+            }
+
+        }
+
+        $this->getResponse()->setStatusCode(400);
+        return $utilities->returnError("Invalid Token");
     }
 }
