@@ -27,7 +27,16 @@ namespace Tracklines\Service\Account;
 
 class Account extends AccountAbstract
 {
-    public function createAccount()
+    public function create()
+    {
+        $returnArray = [];
+
+        $returnArray['clientId'] = 1;
+
+        return $returnArray;
+    }
+
+    public function update()
     {
 
     }
