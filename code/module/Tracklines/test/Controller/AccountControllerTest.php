@@ -86,6 +86,240 @@ class AccountControllerTest extends BaseTest
         parent::setUp();
     }
 
+    //<editor-fold desc="Create Tests">
+
+    /**
+     * Should try and insert data valid token
+     */
+    public function testCreateAccountValidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account", "POST", $this->accountTestData);
+        $this->dispatch("/account");
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     * This test should not try and insert data because invalid token
+     */
+    public function testCreateAccountInvalidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account", "POST", $this->accountTestData);
+        $this->dispatch("/account");
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Update Tests">
+
+    /**
+     *
+     */
+    public function testUpdateAccountValidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account/1", "PUT", $this->accountTestData);
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     *
+     */
+    public function testUpdateAccountInvalidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account/1", "PUT", $this->accountTestData);
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     *
+     */
+    public function testPatchAccountValidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account/1", "PATCH", $this->accountTestData);
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     *
+     */
+    public function testPatchAccountInvalidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account/1", "PATCH", $this->accountTestData);
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Get Tests">
+
+    /**
+     * Should give data based on id
+     */
+    public function testGetAccountCanBeAccessed()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account/1", "GET");
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     * Should give 400 because invalid token no data
+     */
+    public function testGetAccountCannotBeAccessed()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account/1", "GET");
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     * Should get clientid with valid token
+     */
+    public function testRetrieveAccountValidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account", "PATCH", $this->accountTestData);
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     * Should give 400 with invalid token
+     */
+    public function testRetrieveAccountInvalidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account", "PATCH", $this->accountTestData);
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Delete Tests">
+
+    /**
+     *
+     */
+    public function testDeleteAccountValidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account/1", "DELETE");
+        $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    /**
+     *
+     */
+    public function testDeleteAccountInvalidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account/1", "DELETE");
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="List Tests">
 
     /**
@@ -180,240 +414,6 @@ class AccountControllerTest extends BaseTest
 
         $this->dispatch("/account/-1", "GET");
         $this->assertResponseStatusCode(404);
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Create Tests">
-
-    /**
-     * Should try and insert data valid token
-     */
-    public function testCreateAccountValidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account", "POST", $this->accountTestData);
-        $this->dispatch("/account");
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * This test should not try and insert data because invalid token
-     */
-    public function testCreateAccountInvalidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account", "POST", $this->accountTestData);
-        $this->dispatch("/account");
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Get Tests">
-
-    /**
-     * Should give data based on id
-     */
-    public function testGetAccountCanBeAccessed()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account/1", "GET");
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * Should give 400 because invalid token no data
-     */
-    public function testGetAccountCannotBeAccessed()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account/1", "GET");
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * Should get clientid with valid token
-     */
-    public function testRetrieveAccountValidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account", "PATCH", $this->accountTestData);
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * Should give 400 with invalid token
-     */
-    public function testRetrieveAccountInvalidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account", "PATCH", $this->accountTestData);
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Update Tests">
-
-    /**
-     *
-     */
-    public function testUpdateAccountValidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account/1", "PUT", $this->accountTestData);
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     *
-     */
-    public function testUpdateAccountInvalidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account/1", "PUT", $this->accountTestData);
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     *
-     */
-    public function testPatchAccountValidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account/1", "PATCH", $this->accountTestData);
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     *
-     */
-    public function testPatchAccountInvalidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account/1", "PATCH", $this->accountTestData);
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    //</editor-fold>
-
-    //<editor-fold desc="Delete Tests">
-
-    /**
-     *
-     */
-    public function testDeleteAccountValidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account/1", "DELETE");
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     *
-     */
-    public function testDeleteAccountInvalidToken()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account/1", "DELETE");
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
     }
 
     //</editor-fold>

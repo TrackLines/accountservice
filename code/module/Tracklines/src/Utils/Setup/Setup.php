@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Tracklines\Setup;
+namespace Tracklines\Utils\Setup;
 
 use Tracklines\Service\Config\Config;
 
