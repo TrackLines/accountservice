@@ -43,6 +43,7 @@ class IndexControllerTest extends BaseTest
         $this->dispatch('/', "GET");
         $this->assertResponseStatusCode(200);
         $this->assertModuleName('tracklines');
+
         $this->assertControllerName(IndexController::class);
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');

@@ -62,6 +62,11 @@ abstract class AccountAbstract
     private $parentId;
 
     /**
+     * @var bool
+     */
+    private $active;
+
+    /**
      * @return string
      */
     public function getUsername(): string
@@ -157,5 +162,19 @@ abstract class AccountAbstract
         $this->parentId = $parentId;
     }
 
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
 
+    /**
+     * @param bool $active
+     */
+    public function setActive(bool $active)
+    {
+        $this->active = $active;
+    }
 }

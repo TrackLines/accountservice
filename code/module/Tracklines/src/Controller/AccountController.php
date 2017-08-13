@@ -46,6 +46,7 @@ use Zend\View\Model\JsonModel;
 class AccountController extends AbstractRestfulController
 {
     /**
+     * Get Account
      * @param int $id
      * @return JsonModel
      */
@@ -69,7 +70,11 @@ class AccountController extends AbstractRestfulController
                     $validator->setToken($tokenNameValue);
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
-                        return $utilities->blankJson();
+                        $account = new Account();
+
+                        $account->setClientId($id);
+
+                        return new JsonModel($account->get());
                     }
                 }
             }
@@ -81,10 +86,11 @@ class AccountController extends AbstractRestfulController
     }
 
     /**
-     * Get without id
+     * Patch used to get the account id
+     * @param array $data
      * @return JsonModel
      */
-    public function getList()
+    public function patchList($data)
     {
         $utilities = new Utilities();
 
@@ -104,7 +110,13 @@ class AccountController extends AbstractRestfulController
                     $validator->setToken($tokenNameValue);
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
-                        return $utilities->blankJson();
+                        $account    = new Account();
+                        $dataObject = $utilities->convertToObject($data);
+
+                        $account->setUsername($dataObject->credentials->username);
+                        $account->setPassword($dataObject->credentials->password);
+
+                        return new JsonModel($account->retrieve());
                     }
                 }
             }
@@ -116,6 +128,7 @@ class AccountController extends AbstractRestfulController
     }
 
     /**
+     * Create Account
      * @param array $data
      * @return JsonModel
      */
@@ -142,6 +155,7 @@ class AccountController extends AbstractRestfulController
                         $dataObject = $utilities->convertToObject($data);
 
                         $account = new Account();
+
                         $account->setContactNumber($dataObject->contactDetails->number);
                         $account->setEmail($dataObject->contactDetails->email);
                         $account->setParentId($dataObject->parentId);
@@ -160,6 +174,7 @@ class AccountController extends AbstractRestfulController
     }
 
     /**
+     * Update Account
      * @param int $id
      * @param array $data
      * @return JsonModel
@@ -193,8 +208,16 @@ class AccountController extends AbstractRestfulController
                         $account->setUsername($dataObject->credentials->username);
                         $account->setPassword($dataObject->credentials->password);
                         $account->setClientId($id);
+                        $account->setActive($dataObject->active);
 
-                        return new JsonModel($account->update());
+                        if ($account->update()) {
+                            return new JsonModel([
+                                "updated" => true
+                            ]);
+                        } else {
+                            $this->getResponse()->setStatusCode(400);
+                            return $utilities->returnError("Wrong Data");
+                        }
                     }
                 }
             }
@@ -204,4 +227,104 @@ class AccountController extends AbstractRestfulController
         $this->getResponse()->setStatusCode(400);
         return $utilities->returnError("Invalid Token");
     }
+
+    /**
+     * This forwards to Update Account
+     * @param int $id
+     * @param array $data
+     * @return JsonModel
+     */
+    public function patch($id, $data)
+    {
+        return $this->update($id, $data);
+    }
+
+    /**
+     * Delete Account
+     * @param int $id
+     * @return JsonModel
+     */
+    public function delete($id)
+    {
+        $utilities = new Utilities();
+
+        $tokenName = $this->getRequest()->getHeader("tokenName");
+        if ($tokenName) {
+            $tokenValue = $this->getRequest()->getHeader("tokenValue");
+            if ($tokenValue) {
+                $tokenNameValue     = $tokenName->getFieldValue();
+                $tokenValueValue    = $tokenValue->getFieldValue();
+
+                $config = new Config();
+                $tokens = $config->getS3Config("tokens");
+
+                if ($tokens) {
+                    $validator = new Validator();
+                    $validator->setTokens($tokens);
+                    $validator->setToken($tokenNameValue);
+                    $validator->setTokenValue($tokenValueValue);
+                    if ($validator->validateToken()) {
+                        $account = new Account();
+
+                        $account->setClientId($id);
+                        $account->setActive(false);
+
+                        if ($account->safeDelete()) {
+                            return new JsonModel([
+                                "updated" => true
+                            ]);
+                        } else {
+                            $this->getResponse()->setStatusCode(400);
+                            return $utilities->returnError("Wrong Data");
+                        }
+                    }
+                }
+            }
+
+        }
+
+        $this->getResponse()->setStatusCode(400);
+        return $utilities->returnError("Invalid Token");
+    }
+
+    //<editor-fold desc="These Things Do Nothing">
+    /**
+     * This does nothing
+     * @param array $data
+     * @return mixed
+     */
+    public function deleteList($data)
+    {
+        return new JsonModel(parent::deleteList($data));
+    }
+
+    /**
+     * This does nothing
+     * @param array $data
+     * @return JsonModel
+     */
+    public function replaceList($data)
+    {
+        return new JsonModel(parent::replaceList($data));
+    }
+
+    /**
+     * This does nothing
+     * @param array $data
+     * @return JsonModel
+     */
+//    public function patchList($data)
+//    {
+//        return new JsonModel(parent::patchList($data));
+//    }
+
+    /**
+     * This does nothing
+     * @return JsonModel
+     */
+    public function getList()
+    {
+        return new JsonModel(parent::getList());
+    }
+    //</editor-fold>
 }
