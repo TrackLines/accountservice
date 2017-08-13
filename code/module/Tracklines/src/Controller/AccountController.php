@@ -310,16 +310,6 @@ class AccountController extends AbstractRestfulController
 
     /**
      * This does nothing
-     * @param array $data
-     * @return JsonModel
-     */
-//    public function patchList($data)
-//    {
-//        return new JsonModel(parent::patchList($data));
-//    }
-
-    /**
-     * This does nothing
      * @return JsonModel
      */
     public function getList()

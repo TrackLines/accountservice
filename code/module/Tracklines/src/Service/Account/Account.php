@@ -26,7 +26,7 @@
 namespace Tracklines\Service\Account;
 
 use Tracklines\Service\Config\Config;
-use Tracklines\Setup\Setup;
+use Tracklines\Utils\Setup\Setup;
 
 /**
  * Class Account
@@ -52,6 +52,9 @@ class Account extends AccountAbstract
         $dsn .= ("host=" . $dbConfig->address);
 
         $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
+
+        $setup = new Setup();
+        $setup->buildDatabase();
     }
 
     /**
@@ -80,9 +83,7 @@ class Account extends AccountAbstract
 
             $returnData->clientId = $clientId;
         } catch (\Exception $exception) {
-            $setup = new Setup();
-            $setup->buildDatabase();
-            $this->create();
+            print_r($exception->getMessage());
         }
 
         return (array)$returnData;
@@ -144,25 +145,27 @@ class Account extends AccountAbstract
         $returnData = new \stdClass();
 
         try {
-            $statement = $this->databaseConnection->prepare("SELECT id, active, parentId FROM client WHERE username = :username AND password = :password LIMIT 1");
+
+            $statement = $this->databaseConnection->prepare("SELECT id, active, parentId, password FROM client WHERE username = :username LIMIT 1");
             $statement->execute([
-                "username" => $this->getUsername(),
-                "password" => password_hash($this->getPassword(), PASSWORD_DEFAULT),
+                ":username" => $this->getUsername(),
             ]);
             $clientData = $statement->fetch();
 
-            $returnData->parentId   = $clientData['parentId'];
-            $returnData->active     = $clientData['active'];
-            $returnData->clientId   = $clientData['id'];
+            if (password_verify($this->getPassword(), $clientData['password'])) {
+                $returnData->parentId = $clientData['parentId'];
+                $returnData->active = $clientData['active'];
+                $returnData->clientId = $clientData['id'];
 
-            $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
-            $statement->execute([
-                "clientId" => $clientData['id'],
-            ]);
-            $clientContactData = $statement->fetch();
+                $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
+                $statement->execute([
+                    "clientId" => $clientData['id'],
+                ]);
+                $clientContactData = $statement->fetch();
 
-            $returnData->email  = $clientContactData['email'];
-            $returnData->number = $clientContactData['number'];
+                $returnData->email = $clientContactData['email'];
+                $returnData->number = $clientContactData['number'];
+            }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
