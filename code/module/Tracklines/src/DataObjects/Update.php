@@ -90,7 +90,11 @@ class Update
      */
     public function getNewCredentials(): Credentials
     {
-        return $this->newCredentials;
+        if (isset($this->newCredentials)) {
+            return $this->newCredentials;
+        }
+
+        return new Credentials();
     }
 
     /**
@@ -122,7 +126,11 @@ class Update
      */
     public function getNewContactDetails(): ContactDetails
     {
-        return $this->newContactDetails;
+        if (isset($this->newContactDetails)) {
+            return $this->newContactDetails;
+        }
+
+        return new ContactDetails();
     }
 
     /**

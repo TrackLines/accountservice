@@ -57,7 +57,8 @@ class DeleteTest extends BaseTest
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenValue);
 
-        $request->setPost(new Parameters($this->deleteData));
+        $content = http_build_query($this->deleteData);
+        $request->setContent($content);
 
         $this->dispatch("/account", "DELETE");
         $this->assertResponseStatusCode(200);
@@ -77,9 +78,10 @@ class DeleteTest extends BaseTest
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
 
-        $request->setPost($this->deleteData);
+        $content = http_build_query($this->deleteData);
+        $request->setContent($content);
 
-        $this->dispatch("/account/1", "DELETE");
+        $this->dispatch("/account", "DELETE");
         $this->assertResponseStatusCode(400);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);

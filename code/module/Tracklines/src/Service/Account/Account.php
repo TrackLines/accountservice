@@ -111,19 +111,27 @@ class Account
             ]);
             $originalData = $statement->fetch();
             if (password_verify($updateObject->getOriginalCredentials()->getPassword(), $originalData['password'])) {
-                $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password, active = :active WHERE id = :clientId LIMIT 1");
-                $statement->execute([
-                    "clientId" => $updateObject->getClientId(),
-                    "active" => $updateObject->isActive(),
-                    "password" => password_hash($updateObject->getNewCredentials()->getPassword(), PASSWORD_DEFAULT),
-                ]);
+                if ($updateObject->getNewCredentials()) {
+                    if ($updateObject->getNewCredentials()->getPassword() !== "") {
+                        $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password, active = :active WHERE id = :clientId LIMIT 1");
+                        $statement->execute([
+                            "clientId" => $updateObject->getClientId(),
+                            "active" => $updateObject->isActive(),
+                            "password" => password_hash($updateObject->getNewCredentials()->getPassword(), PASSWORD_DEFAULT),
+                        ]);
+                    }
+                }
 
-                $statement = $this->databaseConnection->prepare("UPDATE client_contact SET email = :email, number = :number WHERE id = :clientId LIMIT 1");
-                $statement->execute([
-                    "clientId" => $updateObject->getClientId(),
-                    "email" => $updateObject->getNewContactDetails()->getEmail(),
-                    "number" => $updateObject->getNewContactDetails()->getContactNumber(),
-                ]);
+                if ($updateObject->getNewContactDetails()) {
+                    if ($updateObject->getNewContactDetails()->getEmail() !== "") {
+                        $statement = $this->databaseConnection->prepare("UPDATE client_contact SET email = :email, number = :number WHERE id = :clientId LIMIT 1");
+                        $statement->execute([
+                            "clientId" => $updateObject->getClientId(),
+                            "email" => $updateObject->getNewContactDetails()->getEmail(),
+                            "number" => $updateObject->getNewContactDetails()->getContactNumber(),
+                        ]);
+                    }
+                }
 
                 return true;
             }

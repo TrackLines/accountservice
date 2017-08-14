@@ -181,7 +181,6 @@ class AccountController extends AbstractRestfulController
                     }
                 }
             }
-
         }
 
         $this->getResponse()->setStatusCode(400);
@@ -221,6 +220,9 @@ class AccountController extends AbstractRestfulController
 
                             // id
                             $updateObject->setClientId($id);
+
+                            // active
+                            $updateObject->setActive($dataObject->active);
 
                             // New Credentials
                             $newCredentials     = new Credentials();
@@ -281,19 +283,8 @@ class AccountController extends AbstractRestfulController
 
     /**
      * Delete Account
-     * @param int $id
-     * @return JsonModel
-     */
-    public function delete($id)
-    {
-        return new JsonModel(parent::delete($id));
-    }
-
-    //<editor-fold desc="These Things Do Nothing">
-    /**
-     * This does nothing
      * @param array $data
-     * @return mixed
+     * @return JsonModel
      */
     public function deleteList($data)
     {
@@ -316,10 +307,7 @@ class AccountController extends AbstractRestfulController
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
                         $dataObject = $utilities->convertToObject($data);
-                        //if ($utilities->validUpdateDataObject($dataObject)) {
-
                         $account = new Account();
-
 
                         $client = new Delete();
                         $client->setClientId($dataObject->clientId);
@@ -346,6 +334,17 @@ class AccountController extends AbstractRestfulController
 
         $this->getResponse()->setStatusCode(400);
         return $utilities->returnError("Invalid Token");
+    }
+
+    //<editor-fold desc="These Things Do Nothing">
+    /**
+     * This does nothing
+     * @param int $id
+     * @return JsonModel
+     */
+    public function delete($id)
+    {
+        return new JsonModel(parent::delete($id));
     }
 
     /**
