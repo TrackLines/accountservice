@@ -59,7 +59,7 @@ class DeleteTest extends BaseTest
 
         $request->setPost(new Parameters($this->deleteData));
 
-        $this->dispatch("/account/1", "DELETE");
+        $this->dispatch("/account", "DELETE");
         $this->assertResponseStatusCode(200);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);
@@ -90,9 +90,9 @@ class DeleteTest extends BaseTest
     /**
      * should not allow delete list
      */
-    public function testDeleteListNotAllowed()
+    public function testDeleteIdNotAllowed()
     {
-        $this->dispatch("/account", "DELETE");
+        $this->dispatch("/account/1", "DELETE");
         $this->assertResponseStatusCode(405);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);

@@ -94,10 +94,8 @@ class BaseTest extends AbstractHttpControllerTestCase {
         ];
 
         $this->retrieveData = [
-            "credentials" => [
-                "username" => "testUsername",
-                "password" => "testPassword",
-            ],
+            "username" => "testUsername",
+            "password" => "testPassword",
         ];
 
         $this->deleteData = $this->retrieveData;
