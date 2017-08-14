@@ -53,7 +53,7 @@ class Account extends AccountAbstract
 
         $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
 
-        $setup = new Setup();
+        $setup = new Setup($this->databaseConnection);
         $setup->buildDatabase();
     }
 
