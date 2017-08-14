@@ -45,8 +45,7 @@ class Config implements ConfigInterface
         $returnObj->password = getenv("DATABASE_PASSWORD");
         $returnObj->address = getenv("DATABASE_ADDRESS");
         $returnObj->salt = getenv("DATABASE_ENCRYPTION_SALT");
-
-        $returnObj->database = "account";
+        $returnObj->database = getenv("DATABASE_DATABASE");
 
         return $returnObj;
     }
