@@ -26,32 +26,60 @@
 /**
  * Created by IntelliJ IDEA.
  * User: hootonm
- * Date: 11/08/2017
- * Time: 13:13
+ * Date: 14/08/2017
+ * Time: 12:42
  */
 
-namespace TracklinesTest\Controller;
+namespace Tracklines\DataObjects;
+
 
 /**
- * Class AccountControllerTest
- * @package TracklinesTest\Controller
+ * Class Credentials
+ * @package Tracklines\DataObjects
  */
-class AccountControllerTest extends BaseTest
+class Credentials
 {
     /**
-     *
+     * @var string
      */
-    public function setUp()
+    private $username;
+
+    /**
+     * @var string
+     */
+    private $password;
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
     {
-        parent::setUp();
+        return $this->username;
     }
 
     /**
-     * Should return 404 invalid address
+     * @param string $username
      */
-    public function testInvalidRouteDidNotCrash()
+    public function setUsername(string $username)
     {
-        $this->dispatch("/account/bob", "GET");
-        $this->assertResponseStatusCode(404);
+        $this->username = $username;
     }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
+    }
+
+
 }

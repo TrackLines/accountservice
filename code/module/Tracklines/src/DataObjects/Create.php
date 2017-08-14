@@ -26,32 +26,81 @@
 /**
  * Created by IntelliJ IDEA.
  * User: hootonm
- * Date: 11/08/2017
- * Time: 13:13
+ * Date: 14/08/2017
+ * Time: 12:35
  */
 
-namespace TracklinesTest\Controller;
+namespace Tracklines\DataObjects;
+
 
 /**
- * Class AccountControllerTest
- * @package TracklinesTest\Controller
+ * Class Create
+ * @package Tracklines\DataObjects
  */
-class AccountControllerTest extends BaseTest
+class Create
 {
     /**
-     *
+     * @var Credentials
      */
-    public function setUp()
+    private $credentials;
+
+    /**
+     * @var ContactDetails
+     */
+    private $contactDetails;
+
+    /**
+     * @var int
+     */
+    private $parentId;
+
+    /**
+     * @return Credentials
+     */
+    public function getCredentials(): Credentials
     {
-        parent::setUp();
+        return $this->credentials;
     }
 
     /**
-     * Should return 404 invalid address
+     * @param Credentials $credentials
      */
-    public function testInvalidRouteDidNotCrash()
+    public function setCredentials(Credentials $credentials)
     {
-        $this->dispatch("/account/bob", "GET");
-        $this->assertResponseStatusCode(404);
+        $this->credentials = $credentials;
     }
+
+    /**
+     * @return ContactDetails
+     */
+    public function getContactDetails(): ContactDetails
+    {
+        return $this->contactDetails;
+    }
+
+    /**
+     * @param ContactDetails $contactDetails
+     */
+    public function setContactDetails(ContactDetails $contactDetails)
+    {
+        $this->contactDetails = $contactDetails;
+    }
+
+    /**
+     * @return int
+     */
+    public function getParentId(): int
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * @param int $parentId
+     */
+    public function setParentId(int $parentId)
+    {
+        $this->parentId = $parentId;
+    }
+
+
 }

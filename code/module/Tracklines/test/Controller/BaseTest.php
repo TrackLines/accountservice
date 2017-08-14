@@ -35,6 +35,15 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * @package TracklinesTest\Controller
  */
 class BaseTest extends AbstractHttpControllerTestCase {
+    protected $tokenName;
+    protected $tokenValue;
+    protected $tokenInvalid;
+
+    protected $createTestData;
+    protected $updateTestData1;
+    protected $updateTestData2;
+    protected $retrieveData;
+
     /**
      *
      */
@@ -47,11 +56,57 @@ class BaseTest extends AbstractHttpControllerTestCase {
             $configOverrides
         ));
 
+        $this->tokenName = "bob";
+        $this->tokenValue = "bill";
+        $this->tokenInvalid = "ryan";
+
+        $this->createTestData = [
+            "credentials" => [
+                "username"  => "testUsername",
+                "password"  => "testPassword",
+            ],
+            "contactDetails" => [
+                "email"     => "bob@bob.bob",
+                "number"    => "0123456798",
+            ],
+            "parentId" => 0,
+            "active" => true,
+        ];
+
+        $this->updateTestData1 = [
+            "originalCredentials" => [
+                "username"  => "testUsername",
+                "password"  => "testPassword",
+            ],
+            "newCredentials" => [
+                "password" => "testPasswordUpdate",
+            ],
+        ];
+
+        $this->updateTestData2 = [
+            "originalCredentials" => [
+                "username"  => "testUsername",
+                "password"  => "testPassword",
+            ],
+            "newContactDetails" => [
+                "email" => "bob@bob.bobs",
+            ],
+        ];
+
+        $this->retrieveData = [
+            "credentials" => [
+                "username" => "testUsername",
+                "password" => "testPassword",
+            ],
+        ];
+
+        $this->deleteData = $this->retrieveData;
+
         parent::setUp();
     }
 
     /**
-     *
+     * This exists just to avoid warning
      */
     public function testBase()
     {

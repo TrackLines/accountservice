@@ -8,6 +8,7 @@
 
 namespace Tracklines\Utils;
 
+use Tracklines\DataObjects\Update;
 use Zend\View\Model\JsonModel;
 use Zend\Mvc\Controller\AbstractActionController;
 
@@ -58,7 +59,7 @@ class Utilities extends AbstractActionController
      * @param \stdClass $dataObject
      * @return bool
      */
-    public function validDataObject(\stdClass $dataObject) : bool
+    public function validCreateDataObject(\stdClass $dataObject) : bool
     {
        $valid = false;
 
@@ -86,6 +87,56 @@ class Utilities extends AbstractActionController
        }
 
        return $valid;
+    }
+
+    /**
+     * @param \stdClass $dataObject
+     * @return bool
+     */
+    public function validUpdateDataObject(\stdClass $dataObject) : bool {
+        $valid = false;
+
+        // Old Credentials
+        $validOldCredentials = false;
+        if (isset($dataObject->originalCredentials)) {
+            $validOldCredentials = $this->validateCredentials($dataObject->originalCredentials);
+        }
+
+        // New Credentials
+        $newCredentials = true;
+        if (isset($dataObject->newCredentials)) {
+            $newCredentials = $this->validateCredentials($dataObject->newCredentials);
+        }
+
+        // New Contact Details
+        $newContactDetails = true;
+        if (isset($dataObject->newContactDetails)) {
+            if (isset($dataObject->newContactDetails)) {
+                if (isset($dataObject->newCredentials->email)) {
+                    $newContactDetails = filter_var($$dataObject->newCredentials->email, FILTER_VALIDATE_EMAIL);
+                }
+
+                if (isset($dataObject->newCredentials->number)) {
+                    if (strlen($dataObject->newCredentials->number) === 0) {
+                        $newContactDetails = false;
+                    }
+                }
+            }
+        }
+
+        if ($validOldCredentials) {
+            $valid = true;
+
+            if ($newContactDetails) {
+                $valid = true;
+            }
+
+            if ($newCredentials) {
+                $valid = true;
+            }
+        }
+
+        return $valid;
     }
 
     /**

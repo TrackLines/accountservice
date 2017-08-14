@@ -25,14 +25,19 @@
 
 namespace Tracklines\Service\Account;
 
+use Tracklines\DataObjects\ContactDetails;
 use Tracklines\Service\Config\Config;
 use Tracklines\Utils\Setup\Setup;
+use Tracklines\DataObjects\Create;
+use Tracklines\DataObjects\Update;
+use Tracklines\DataObjects\Client;
+use Tracklines\DataObjects\Delete;
 
 /**
  * Class Account
  * @package Tracklines\Service\Account
  */
-class Account extends AccountAbstract
+class Account
 {
     /**
      * @var \PDO
@@ -57,19 +62,21 @@ class Account extends AccountAbstract
         $setup->buildDatabase();
     }
 
+
     /**
+     * @param Create $createObject
      * @return array
      */
-    public function create()
+    public function create($createObject) : array
     {
-        $returnData = new \stdClass();
+        $returnData = new Client();
 
         try {
             $statement = $this->databaseConnection->prepare("INSERT INTO client (parentId, username, password) VALUES (:parentId, :username, :password)");
             $statement->execute([
-                "parentId" => $this->getParentId(),
-                "username" => $this->getUsername(),
-                "password" => password_hash($this->getPassword(), PASSWORD_DEFAULT),
+                "parentId" => $createObject->getParentId(),
+                "username" => $createObject->getCredentials()->getUsername(),
+                "password" => password_hash($createObject->getCredentials()->getPassword(), PASSWORD_DEFAULT),
             ]);
 
             $clientId = $this->databaseConnection->lastInsertId();
@@ -77,11 +84,11 @@ class Account extends AccountAbstract
             $statement = $this->databaseConnection->prepare("INSERT INTO client_contact (clientId, email, number) VALUES (:clientId, :email, :number)");
             $statement->execute([
                 "clientId"  => $clientId,
-                "email"     => $this->getEmail(),
-                "number"    => $this->getContactNumber(),
+                "email"     => $createObject->getContactDetails()->getEmail(),
+                "number"    => $createObject->getContactDetails()->getContactNumber(),
             ]);
 
-            $returnData->clientId = $clientId;
+            $returnData->setClientId($clientId);
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
@@ -90,26 +97,35 @@ class Account extends AccountAbstract
     }
 
     /**
+     * @param Update $updateObject
      * @return bool
      */
-    public function update()
+    public function update($updateObject) : bool
     {
         try {
-            $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password, active = :active WHERE id = :clientId LIMIT 1");
+            $statement = $this->databaseConnection->prepare("SELECT password FROM client WHERE username = :username AND id = :clientId LIMIT 1");
             $statement->execute([
-                "clientId" => $this->getClientId(),
-                "active" => $this->isActive(),
-                "password" => password_hash($this->getPassword(), PASSWORD_DEFAULT),
+                "clientId" => $updateObject->getClientId(),
+                "username" => $updateObject->getOriginalCredentials()->getUsername(),
             ]);
+            $originalData = $statement->fetch();
+            if (password_verify($updateObject->getOriginalCredentials()->getPassword(), $originalData['password'])) {
+                $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password, active = :active WHERE id = :clientId LIMIT 1");
+                $statement->execute([
+                    "clientId" => $updateObject->getClientId(),
+                    "active" => $updateObject->isActive(),
+                    "password" => password_hash($updateObject->getNewCredentials()->getPassword(), PASSWORD_DEFAULT),
+                ]);
 
-            $statement = $this->databaseConnection->prepare("UPDATE client_contact SET email = :email, number = :number WHERE id = :clientId LIMIT 1");
-            $statement->execute([
-                "clientId" => $this->getClientId(),
-                "email" => $this->getEmail(),
-                "number" => $this->getContactNumber(),
-            ]);
+                $statement = $this->databaseConnection->prepare("UPDATE client_contact SET email = :email, number = :number WHERE id = :clientId LIMIT 1");
+                $statement->execute([
+                    "clientId" => $updateObject->getClientId(),
+                    "email" => $updateObject->getNewContactDetails()->getEmail(),
+                    "number" => $updateObject->getNewContactDetails()->getContactNumber(),
+                ]);
 
-            return true;
+                return true;
+            }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
@@ -118,18 +134,27 @@ class Account extends AccountAbstract
     }
 
     /**
+     * @param Delete $updateObject
      * @return bool
      */
-    public function safeDelete()
+    public function safeDelete($updateObject) : bool
     {
         try {
-            $statement = $this->databaseConnection->prepare("UPDATE client SET active = :active WHERE clientId = :clientId LIMIT 1");
+            $statement = $this->databaseConnection->prepare("SELECT password FROM client WHERE username = :username AND id = :clientId LIMIT 1");
             $statement->execute([
-                "clientId" => $this->getClientId(),
-                "active" => $this->isActive(),
+                "clientId" => $updateObject->getClientId(),
+                "username" => $updateObject->getCredentials()->getUsername(),
             ]);
+            $originalData = $statement->fetch();
+            if (password_verify($updateObject->getCredentials()->getPassword(), $originalData['password'])) {
+                $statement = $this->databaseConnection->prepare("UPDATE client SET active = :active WHERE clientId = :clientId LIMIT 1");
+                $statement->execute([
+                    "clientId" => $updateObject->getClientId(),
+                    "active" => $updateObject->isActive(),
+                ]);
 
-            return true;
+                return true;
+            }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
@@ -138,11 +163,12 @@ class Account extends AccountAbstract
     }
 
     /**
+     * @param Client $clientObject
      * @return array
      */
-    public function retrieve()
+    public function retrieve($clientObject) : array
     {
-        $returnData = new \stdClass();
+        $returnData = new Client();
 
         try {
 
@@ -152,10 +178,10 @@ class Account extends AccountAbstract
             ]);
             $clientData = $statement->fetch();
 
-            if (password_verify($this->getPassword(), $clientData['password'])) {
-                $returnData->parentId = $clientData['parentId'];
-                $returnData->active = $clientData['active'];
-                $returnData->clientId = $clientData['id'];
+            if (password_verify($clientObject->getCredentails()->getPassword(), $clientData['password'])) {
+                $returnData->setParentId($clientData['parentId']);
+                $returnData->setActive($clientData['active']);
+                $returnData->setClientId($clientData['id']);
 
                 $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
                 $statement->execute([
@@ -163,8 +189,11 @@ class Account extends AccountAbstract
                 ]);
                 $clientContactData = $statement->fetch();
 
-                $returnData->email = $clientContactData['email'];
-                $returnData->number = $clientContactData['number'];
+                $contactDetails = new ContactDetails();
+
+                $contactDetails->setEmail($clientContactData['email']);
+                $contactDetails->setContactNumber($clientContactData['number']);
+                $returnData->setContactDetails($contactDetails);
             }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -174,30 +203,33 @@ class Account extends AccountAbstract
     }
 
     /**
+     * @param Client $clientObject
      * @return array
      */
-    public function get()
+    public function get($clientObject) : array
     {
-        $returnData = new \stdClass();
+        $returnData = new Client();
 
         try {
             $statement = $this->databaseConnection->prepare("SELECT active, parentId FROM client WHERE id = :clientId LIMIT 1");
             $statement->execute([
-                "clientId" => $this->getClientId(),
+                "clientId" => $clientObject->getClientId(),
             ]);
             $clientData = $statement->fetch();
 
-            $returnData->parentId   = $clientData['parentId'];
-            $returnData->active     = $clientData['active'];
+            $returnData->setParentId($clientData['parentId']);
+            $returnData->setActive($clientData['active']);
 
             $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
             $statement->execute([
-                "clientId" => $this->getClientId(),
+                "clientId" => $clientObject->getClientId(),
             ]);
             $clientContactData = $statement->fetch();
 
-            $returnData->email  = $clientContactData['email'];
-            $returnData->number = $clientContactData['number'];
+            $contactDetails = new ContactDetails();
+            $contactDetails->setEmail($clientContactData['email']);
+            $contactDetails->setContactNumber($clientContactData['number']);
+            $returnData->setContactDetails($contactDetails);
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }

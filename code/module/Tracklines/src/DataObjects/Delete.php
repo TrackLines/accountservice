@@ -26,32 +26,79 @@
 /**
  * Created by IntelliJ IDEA.
  * User: hootonm
- * Date: 11/08/2017
- * Time: 13:13
+ * Date: 14/08/2017
+ * Time: 15:05
  */
 
-namespace TracklinesTest\Controller;
+namespace Tracklines\DataObjects;
+
 
 /**
- * Class AccountControllerTest
- * @package TracklinesTest\Controller
+ * Class Delete
+ * @package Tracklines\DataObjects
  */
-class AccountControllerTest extends BaseTest
+class Delete
 {
     /**
-     *
+     * @var int
      */
-    public function setUp()
+    private $clientId;
+
+    /**
+     * @var bool
+     */
+    private $active;
+
+    /**
+     * @var Credentials
+     */
+    private $credentials;
+
+    /**
+     * @return int
+     */
+    public function getClientId(): int
     {
-        parent::setUp();
+        return $this->clientId;
     }
 
     /**
-     * Should return 404 invalid address
+     * @param int $clientId
      */
-    public function testInvalidRouteDidNotCrash()
+    public function setClientId(int $clientId)
     {
-        $this->dispatch("/account/bob", "GET");
-        $this->assertResponseStatusCode(404);
+        $this->clientId = $clientId;
+    }
+
+    /**
+     * @return Credentials
+     */
+    public function getCredentials(): Credentials
+    {
+        return $this->credentials;
+    }
+
+    /**
+     * @param Credentials $credentials
+     */
+    public function setCredentials(Credentials $credentials)
+    {
+        $this->credentials = $credentials;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool $active
+     */
+    public function setActive(bool $active)
+    {
+        $this->active = $active;
     }
 }

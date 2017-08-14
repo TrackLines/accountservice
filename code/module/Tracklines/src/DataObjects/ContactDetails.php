@@ -26,32 +26,60 @@
 /**
  * Created by IntelliJ IDEA.
  * User: hootonm
- * Date: 11/08/2017
- * Time: 13:13
+ * Date: 14/08/2017
+ * Time: 12:40
  */
 
-namespace TracklinesTest\Controller;
+namespace Tracklines\DataObjects;
+
 
 /**
- * Class AccountControllerTest
- * @package TracklinesTest\Controller
+ * Class ContactDetails
+ * @package Tracklines\DataObjects
  */
-class AccountControllerTest extends BaseTest
+class ContactDetails
 {
     /**
-     *
+     * @var string
      */
-    public function setUp()
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $contactNumber;
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
     {
-        parent::setUp();
+        return $this->email;
     }
 
     /**
-     * Should return 404 invalid address
+     * @param string $email
      */
-    public function testInvalidRouteDidNotCrash()
+    public function setEmail(string $email)
     {
-        $this->dispatch("/account/bob", "GET");
-        $this->assertResponseStatusCode(404);
+        $this->email = $email;
     }
+
+    /**
+     * @return string
+     */
+    public function getContactNumber(): string
+    {
+        return $this->contactNumber;
+    }
+
+    /**
+     * @param string $contactNumber
+     */
+    public function setContactNumber(string $contactNumber)
+    {
+        $this->contactNumber = $contactNumber;
+    }
+
+
 }
