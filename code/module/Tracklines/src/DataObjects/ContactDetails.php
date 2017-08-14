@@ -54,7 +54,11 @@ class ContactDetails
      */
     public function getEmail(): string
     {
-        return $this->email;
+        if (isset($this->email)) {
+            return $this->email;
+        }
+
+        return "";
     }
 
     /**
@@ -70,7 +74,11 @@ class ContactDetails
      */
     public function getContactNumber(): string
     {
-        return $this->contactNumber;
+        if (isset($this->contactNumber)) {
+            return $this->contactNumber;
+        }
+
+        return "";
     }
 
     /**

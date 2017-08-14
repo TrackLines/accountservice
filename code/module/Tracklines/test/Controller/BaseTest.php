@@ -35,14 +35,45 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * @package TracklinesTest\Controller
  */
 class BaseTest extends AbstractHttpControllerTestCase {
+    /**
+     * @var string
+     */
     protected $tokenName;
+
+    /**
+     * @var string
+     */
     protected $tokenValue;
+
+    /**
+     * @var string
+     */
     protected $tokenInvalid;
 
+    /**
+     * @var array
+     */
     protected $createTestData;
+
+    /**
+     * @var array
+     */
     protected $updateTestData1;
+
+    /**
+     * @var array
+     */
     protected $updateTestData2;
+
+    /**
+     * @var array
+     */
     protected $retrieveData;
+
+    /**
+     * @var array
+     */
+    protected $deleteData;
 
     /**
      *
@@ -74,6 +105,7 @@ class BaseTest extends AbstractHttpControllerTestCase {
         ];
 
         $this->updateTestData1 = [
+            "active" => true,
             "originalCredentials" => [
                 "username"  => "testUsername",
                 "password"  => "testPassword",
@@ -84,6 +116,7 @@ class BaseTest extends AbstractHttpControllerTestCase {
         ];
 
         $this->updateTestData2 = [
+            "active" => true,
             "originalCredentials" => [
                 "username"  => "testUsername",
                 "password"  => "testPassword",
@@ -98,7 +131,13 @@ class BaseTest extends AbstractHttpControllerTestCase {
             "password" => "testPassword",
         ];
 
-        $this->deleteData = $this->retrieveData;
+        $this->deleteData = [
+            "credentials" => [
+                "username" => "testUsername",
+                "password" => "testPassword",
+            ],
+            "clientId" => 1,
+        ];
 
         parent::setUp();
     }

@@ -70,7 +70,11 @@ class Credentials
      */
     public function getPassword(): string
     {
-        return $this->password;
+        if (isset($this->password)) {
+            return $this->password;
+        }
+
+        return "";
     }
 
     /**
@@ -80,6 +84,4 @@ class Credentials
     {
         $this->password = $password;
     }
-
-
 }
