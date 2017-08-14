@@ -41,16 +41,9 @@ class Setup
     /**
      * Setup constructor.
      */
-    public function __construct()
+    public function __construct($databaseConnection)
     {
-        $config     = new Config();
-        $dbConfig   = $config->getDatabaseConfig();
-
-        $dsn  = "mysql:";
-        $dsn .= ("dbname=" . $dbConfig->database . ";");
-        $dsn .= ("host=" . $dbConfig->address);
-
-        $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
+        $this->databaseConnection = $databaseConnection;
     }
 
     /**

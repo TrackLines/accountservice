@@ -72,8 +72,8 @@ class AccountControllerTest extends BaseTest
 
         $this->accountTestData = [
             "credentials" => [
-                "username"  => "bob",
-                "password"  => "bob",
+                "username"  => "testUsername",
+                "password"  => "testPassword",
             ],
             "contactDetails" => [
                 "email"     => "bob@bob.bob",
@@ -101,6 +101,22 @@ class AccountControllerTest extends BaseTest
         $this->dispatch("/account", "POST", $this->accountTestData);
         $this->dispatch("/account");
         $this->assertResponseStatusCode(200);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
+    }
+
+    public function testCreateAccountInvalidData()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account", "POST", []);
+        $this->dispatch("/account");
+        $this->assertResponseStatusCode(400);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);
         $this->assertControllerClass("AccountController");

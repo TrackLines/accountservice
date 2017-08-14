@@ -37,6 +37,7 @@ class Utilities extends AbstractActionController
     }
 
     /**
+     * Convert the array to object
      * @param array $array
      * @return \stdClass
      */
@@ -50,5 +51,101 @@ class Utilities extends AbstractActionController
             $object->$key = $value;
         }
         return $object;
+    }
+
+    /**
+     * Make sure the object is valid
+     * @param \stdClass $dataObject
+     * @return bool
+     */
+    public function validDataObject(\stdClass $dataObject) : bool
+    {
+       $valid = false;
+
+       $parentValid = false;
+       if (isset($dataObject->parentId) && is_int($dataObject->parentId)) {
+           $parentValid = true;
+       }
+
+       $credentialsValid = false;
+       if (isset($dataObject->credentials) && $credentials = $dataObject->credentials) {
+           $credentialsValid = $this->validateCredentials($credentials);
+       }
+
+       $contactValid = false;
+       if (isset($dataObject->contactDetails) && $contact = $dataObject->contactDetails) {
+           $contactValid = $this->validateContactDetails($contact);
+       }
+
+       if ($parentValid) {
+           if ($credentialsValid) {
+               if ($contactValid) {
+                   $valid = true;
+               }
+           }
+       }
+
+       return $valid;
+    }
+
+    /**
+     * Validate the credentials object
+     * @param \stdClass $credentials
+     * @return bool
+     */
+    private function validateCredentials(\stdClass $credentials) : bool
+    {
+        $valid = false;
+
+        $usernameValid = false;
+        if (isset($credentials->username) && $username = $credentials->username) {
+            if (strlen($username) >= 5) {
+                $usernameValid = true;
+            }
+        }
+
+        $passwordValid = false;
+        if (isset($credentials->password) && $password = $credentials->password) {
+            if (strlen($password) >= 10) {
+                $passwordValid = true;
+            }
+        }
+
+        if ($usernameValid) {
+            if ($passwordValid) {
+                $valid = true;
+            }
+        }
+        return $valid;
+    }
+
+    /**
+     * Validate the contact details object
+     * @param \stdClass $contactDetails
+     * @return bool
+     */
+    private function validateContactDetails(\stdClass $contactDetails) : bool
+    {
+        $valid = false;
+
+        $emailValid = false;
+        if (isset($contactDetails->email) && $email = $contactDetails->email) {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $emailValid = true;
+            }
+        }
+
+        $numberValid = false;
+        if (isset($contactDetails->number) && $number = $contactDetails->number) {
+            $numberValid = true;
+        }
+
+        if ($emailValid) {
+            if ($numberValid) {
+                $valid = true;
+            }
+        }
+
+        return $valid;
     }
 }

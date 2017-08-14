@@ -153,16 +153,17 @@ class AccountController extends AbstractRestfulController
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
                         $dataObject = $utilities->convertToObject($data);
+                        if ($utilities->validDataObject($dataObject)) {
+                            $account = new Account();
 
-                        $account = new Account();
+                            $account->setParentId($dataObject->parentId);
+                            $account->setContactNumber($dataObject->contactDetails->number);
+                            $account->setEmail($dataObject->contactDetails->email);
+                            $account->setUsername($dataObject->credentials->username);
+                            $account->setPassword($dataObject->credentials->password);
 
-                        $account->setContactNumber($dataObject->contactDetails->number);
-                        $account->setEmail($dataObject->contactDetails->email);
-                        $account->setParentId($dataObject->parentId);
-                        $account->setUsername($dataObject->credentials->username);
-                        $account->setPassword($dataObject->credentials->password);
-
-                        return new JsonModel($account->create());
+                            return new JsonModel($account->create());
+                        }
                     }
                 }
             }
