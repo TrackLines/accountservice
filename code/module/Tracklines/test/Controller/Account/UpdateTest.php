@@ -56,7 +56,7 @@ class UpdateTest extends BaseTest
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenValue);
 
-        $this->dispatch("/account/1", "PUT", $this->accountTestData1);
+        $this->dispatch("/account/1", "PUT", $this->updateTestData1);
         $this->assertResponseStatusCode(200);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);
@@ -74,7 +74,7 @@ class UpdateTest extends BaseTest
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
 
-        $this->dispatch("/account/1", "PUT", $this->accountTestData1);
+        $this->dispatch("/account/1", "PUT", $this->updateTestData1);
         $this->assertResponseStatusCode(400);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);

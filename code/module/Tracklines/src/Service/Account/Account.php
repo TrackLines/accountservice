@@ -26,6 +26,7 @@
 namespace Tracklines\Service\Account;
 
 use Tracklines\DataObjects\ContactDetails;
+use Tracklines\DataObjects\Credentials;
 use Tracklines\Service\Config\Config;
 use Tracklines\Utils\Setup\Setup;
 use Tracklines\DataObjects\Create;
@@ -163,7 +164,7 @@ class Account
     }
 
     /**
-     * @param Client $clientObject
+     * @param Credentials $clientObject
      * @return array
      */
     public function retrieve($clientObject) : array
@@ -174,11 +175,11 @@ class Account
 
             $statement = $this->databaseConnection->prepare("SELECT id, active, parentId, password FROM client WHERE username = :username LIMIT 1");
             $statement->execute([
-                ":username" => $this->getUsername(),
+                ":username" => $clientObject->getUsername(),
             ]);
             $clientData = $statement->fetch();
 
-            if (password_verify($clientObject->getCredentails()->getPassword(), $clientData['password'])) {
+            if (password_verify($clientObject->getPassword(), $clientData['password'])) {
                 $returnData->setParentId($clientData['parentId']);
                 $returnData->setActive($clientData['active']);
                 $returnData->setClientId($clientData['id']);

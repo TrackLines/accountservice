@@ -120,10 +120,11 @@ class AccountController extends AbstractRestfulController
                         $account    = new Account();
                         $dataObject = $utilities->convertToObject($data);
 
-                        $account->setUsername($dataObject->credentials->username);
-                        $account->setPassword($dataObject->credentials->password);
+                        $retrieve = new Credentials();
+                        $retrieve->setUsername($dataObject->username);
+                        $retrieve->setPassword($dataObject->password);
 
-                        return new JsonModel($account->retrieve());
+                        return new JsonModel($account->retrieve($retrieve));
                     }
                 }
             }
@@ -285,6 +286,17 @@ class AccountController extends AbstractRestfulController
      */
     public function delete($id)
     {
+        return new JsonModel(parent::delete($id));
+    }
+
+    //<editor-fold desc="These Things Do Nothing">
+    /**
+     * This does nothing
+     * @param array $data
+     * @return mixed
+     */
+    public function deleteList($data)
+    {
         $utilities = new Utilities();
 
         $tokenName = $this->getRequest()->getHeader("tokenName");
@@ -303,11 +315,20 @@ class AccountController extends AbstractRestfulController
                     $validator->setToken($tokenNameValue);
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
+                        $dataObject = $utilities->convertToObject($data);
+                        //if ($utilities->validUpdateDataObject($dataObject)) {
+
                         $account = new Account();
 
+
                         $client = new Delete();
-                        $client->setClientId($id);
+                        $client->setClientId($dataObject->clientId);
                         $client->setActive(false);
+
+                        $credentials = new Credentials();
+                        $credentials->setPassword($dataObject->credentials->password);
+                        $credentials->setUsername($dataObject->credentials->username);
+                        $client->setCredentials($credentials);
 
                         if ($account->safeDelete($client)) {
                             return new JsonModel([
@@ -325,17 +346,6 @@ class AccountController extends AbstractRestfulController
 
         $this->getResponse()->setStatusCode(400);
         return $utilities->returnError("Invalid Token");
-    }
-
-    //<editor-fold desc="These Things Do Nothing">
-    /**
-     * This does nothing
-     * @param array $data
-     * @return mixed
-     */
-    public function deleteList($data)
-    {
-        return new JsonModel(parent::deleteList($data));
     }
 
     /**
