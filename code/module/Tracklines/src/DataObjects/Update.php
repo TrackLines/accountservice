@@ -23,43 +23,46 @@
  * SOFTWARE.
  */
 
-namespace Tracklines\Service\Account;
+/**
+ * Created by IntelliJ IDEA.
+ * User: hootonm
+ * Date: 14/08/2017
+ * Time: 12:37
+ */
+
+namespace Tracklines\DataObjects;
+
 
 /**
- * Class AccountAbstract
- * @package Tracklines\Service\Account
+ * Class Update
+ * @package Tracklines\DataObjects
  */
-abstract class AccountAbstract
+class Update
 {
-    /**
-     * @var string
-     */
-    private $username;
-
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
-     * @var string
-     */
-    private $email;
-
-    /**
-     * @var string
-     */
-    private $contactNumber;
-
     /**
      * @var int
      */
     private $clientId;
 
     /**
-     * @var int
+     * @var Credentials
      */
-    private $parentId;
+    private $originalCredentials;
+
+    /**
+     * @var Credentials
+     */
+    private $newCredentials;
+
+    /**
+     * @var ContactDetails
+     */
+    private $originalContactDetails;
+
+    /**
+     * @var ContactDetails
+     */
+    private $newContactDetails;
 
     /**
      * @var bool
@@ -67,67 +70,67 @@ abstract class AccountAbstract
     private $active;
 
     /**
-     * @return string
+     * @return Credentials
      */
-    public function getUsername(): string
+    public function getOriginalCredentials(): Credentials
     {
-        return $this->username;
+        return $this->originalCredentials;
     }
 
     /**
-     * @param string $username
+     * @param Credentials $originalCredentials
      */
-    public function setUsername(string $username)
+    public function setOriginalCredentials(Credentials $originalCredentials)
     {
-        $this->username = $username;
+        $this->originalCredentials = $originalCredentials;
     }
 
     /**
-     * @return string
+     * @return Credentials
      */
-    public function getPassword(): string
+    public function getNewCredentials(): Credentials
     {
-        return $this->password;
+        return $this->newCredentials;
     }
 
     /**
-     * @param string $password
+     * @param Credentials $newCredentials
      */
-    public function setPassword(string $password)
+    public function setNewCredentials(Credentials $newCredentials)
     {
-        $this->password = $password;
+        $this->newCredentials = $newCredentials;
     }
 
     /**
-     * @return string
+     * @return ContactDetails
      */
-    public function getEmail(): string
+    public function getOriginalContactDetails(): ContactDetails
     {
-        return $this->email;
+        return $this->originalContactDetails;
     }
 
     /**
-     * @param string $email
+     * @param ContactDetails $originalContactDetails
      */
-    public function setEmail(string $email)
+    public function setOriginalContactDetails(ContactDetails $originalContactDetails)
     {
-        $this->email = $email;
+        $this->originalContactDetails = $originalContactDetails;
     }
 
     /**
-     * @return string
+     * @return ContactDetails
      */
-    public function getContactNumber(): string
+    public function getNewContactDetails(): ContactDetails
     {
-        return $this->contactNumber;
+        return $this->newContactDetails;
     }
 
     /**
-     * @param string $contactNumber
+     * @param ContactDetails $newContactDetails
      */
-    public function setContactNumber(string $contactNumber)
+    public function setNewContactDetails(ContactDetails $newContactDetails)
     {
-        $this->contactNumber = $contactNumber;
+        $this->newContactDetails = $newContactDetails;
     }
 
     /**
@@ -144,22 +147,6 @@ abstract class AccountAbstract
     public function setClientId(int $clientId)
     {
         $this->clientId = $clientId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getParentId(): int
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * @param int $parentId
-     */
-    public function setParentId(int $parentId)
-    {
-        $this->parentId = $parentId;
     }
 
     /**

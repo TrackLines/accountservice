@@ -32,6 +32,12 @@
 
 namespace Tracklines\Controller;
 
+use Tracklines\DataObjects\Client;
+use Tracklines\DataObjects\ContactDetails;
+use Tracklines\DataObjects\Create;
+use Tracklines\DataObjects\Credentials;
+use Tracklines\DataObjects\Delete;
+use Tracklines\DataObjects\Update;
 use Tracklines\Service\Account\Account;
 use Tracklines\Service\Config\Config;
 use Tracklines\Service\Token\Validator;
@@ -72,9 +78,10 @@ class AccountController extends AbstractRestfulController
                     if ($validator->validateToken()) {
                         $account = new Account();
 
-                        $account->setClientId($id);
+                        $client = new Client();
+                        $client->setClientId($id);
 
-                        return new JsonModel($account->get());
+                        return new JsonModel($account->get($client));
                     }
                 }
             }
@@ -153,16 +160,22 @@ class AccountController extends AbstractRestfulController
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
                         $dataObject = $utilities->convertToObject($data);
-                        if ($utilities->validDataObject($dataObject)) {
+                        if ($utilities->validCreateDataObject($dataObject)) {
+                            $credentials = new Credentials();
+                            $credentials->setUsername($dataObject->credentials->username);
+                            $credentials->setPassword($dataObject->credentials->password);
+
+                            $contactDetails = new ContactDetails();
+                            $contactDetails->setContactNumber($dataObject->contactDetails->number);
+                            $contactDetails->setEmail($dataObject->contactDetails->email);
+
+                            $createObject = new Create();
+                            $createObject->setContactDetails($contactDetails);
+                            $createObject->setCredentials($credentials);
+                            $createObject->setParentId($dataObject->parentId);
+
                             $account = new Account();
-
-                            $account->setParentId($dataObject->parentId);
-                            $account->setContactNumber($dataObject->contactDetails->number);
-                            $account->setEmail($dataObject->contactDetails->email);
-                            $account->setUsername($dataObject->credentials->username);
-                            $account->setPassword($dataObject->credentials->password);
-
-                            return new JsonModel($account->create());
+                            return new JsonModel($account->create($createObject));
                         }
                     }
                 }
@@ -201,20 +214,46 @@ class AccountController extends AbstractRestfulController
                     $validator->setTokenValue($tokenValueValue);
                     if ($validator->validateToken()) {
                         $dataObject = $utilities->convertToObject($data);
+                        if ($utilities->validUpdateDataObject($dataObject)) {
+                            $updateObject = new Update();
+                            $account = new Account();
 
-                        $account = new Account();
-                        $account->setContactNumber($dataObject->contactDetails->number);
-                        $account->setEmail($dataObject->contactDetails->email);
-                        $account->setParentId($dataObject->parentId);
-                        $account->setUsername($dataObject->credentials->username);
-                        $account->setPassword($dataObject->credentials->password);
-                        $account->setClientId($id);
-                        $account->setActive($dataObject->active);
+                            // id
+                            $updateObject->setClientId($id);
 
-                        if ($account->update()) {
-                            return new JsonModel([
-                                "updated" => true
-                            ]);
+                            // New Credentials
+                            $newCredentials     = new Credentials();
+                            if (isset($dataObject->newCredentials)) {
+                                if (isset($dataObject->newCredentails->password)) {
+                                    $newCredentials->setPassword($dataObject->newCredentails->password);
+                                }
+                                $updateObject->setNewCredentials($newCredentials);
+                            }
+
+                            // New Contact Details
+                            $newContactDetails  = new ContactDetails();
+                            if (isset($dataObject->newContactDetails)) {
+                                if (isset($dataObject->newContactDetails->email)) {
+                                    $newContactDetails->setEmail($dataObject->newContactDetails->email);
+                                }
+
+                                if (isset($dataObject->newContactDetails->number)) {
+                                    $newContactDetails->setContactNumber($dataObject->newContactDetails->number);
+                                }
+                                $updateObject->setNewContactDetails($newContactDetails);
+                            }
+
+                            // Old Credentials
+                            $oldCredentials     = new Credentials();
+                            $oldCredentials->setUsername($dataObject->originalCredentials->username);
+                            $oldCredentials->setPassword($dataObject->originalCredentials->password);
+                            $updateObject->setOriginalCredentials($oldCredentials);
+
+                            if ($account->update($updateObject)) {
+                                return new JsonModel([
+                                    "updated" => true
+                                ]);
+                            }
                         } else {
                             $this->getResponse()->setStatusCode(400);
                             return $utilities->returnError("Wrong Data");
@@ -222,7 +261,6 @@ class AccountController extends AbstractRestfulController
                     }
                 }
             }
-
         }
 
         $this->getResponse()->setStatusCode(400);
@@ -267,10 +305,11 @@ class AccountController extends AbstractRestfulController
                     if ($validator->validateToken()) {
                         $account = new Account();
 
-                        $account->setClientId($id);
-                        $account->setActive(false);
+                        $client = new Delete();
+                        $client->setClientId($id);
+                        $client->setActive(false);
 
-                        if ($account->safeDelete()) {
+                        if ($account->safeDelete($client)) {
                             return new JsonModel([
                                 "updated" => true
                             ]);
