@@ -53,12 +53,21 @@ class Setup
     {
         $this->createClient();
         $this->createContact();
+        $this->createKeys();
+    }
+
+    public function destroyDatabase()
+    {
+        $this->deleteClient();
+        $this->deleteContact();
+        $this->deleteKeys();
     }
 
     /**
      *
      */
-    private function createClient() {
+    private function createClient()
+    {
         try {
             $statement = $this->databaseConnection->prepare("
           CREATE TABLE `client` (
@@ -68,7 +77,7 @@ class Setup
             `password` varchar(255) DEFAULT NULL,
             `active` bool DEFAULT '1',
             PRIMARY KEY (`id`)
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             $statement->execute();
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -88,7 +97,57 @@ class Setup
               `email` varchar(255) DEFAULT NULL,
               `number` varchar(255) DEFAULT NULL,
               PRIMARY KEY (`id`)
-          ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            $statement->execute();
+        } catch (\Exception $exception) {
+            print_r($exception->getMessage());
+        }
+    }
+
+    private function createKeys()
+    {
+        try {
+            $statement = $this->databaseConnection->prepare("
+            CREATE TABLE `client_keys` (
+                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                `clientId` int(11) DEFAULT NULL,
+                `api_key` varchar(255) DEFAULT NULL,
+                `interface_key` varchar(255) DEFAULT NULL,
+                PRIMARY_KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            $statement->execute();
+        } catch (\Exception $exception) {
+            print_r($exception->getMessage());
+        }
+    }
+
+    private function deleteClient()
+    {
+        try {
+            $statement = $this->databaseConnection->prepare("
+                DROP TABLE `client`;");
+            $statement->execute();
+        } catch (\Exception $exception) {
+            print_r($exception->getMessage();
+        }
+    }
+
+    private function deleteContact()
+    {
+        try {
+            $statement = $this->databaseConnection->prepare("
+                DROP TABLE `client_contact`;");
+            $statement->execute();
+        } catch (\Exception $exception) {
+            print_r($exception->getMessage());
+        }
+    }
+
+    private function deleteKeys()
+    {
+        try {
+            $statement = $this->databaseConnection->prepare("
+                DROP TABLE `client_keys`;");
             $statement->execute();
         } catch (\Exception $exception) {
             print_r($exception->getMessage());

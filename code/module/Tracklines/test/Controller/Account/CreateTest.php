@@ -106,4 +106,9 @@ class CreateTest extends BaseTest
         $this->assertControllerClass("AccountController");
         $this->assertMatchedRouteName("account");
     }
+
+    public function tearDown()
+    {
+        super::tearDown();
+    }
 }
