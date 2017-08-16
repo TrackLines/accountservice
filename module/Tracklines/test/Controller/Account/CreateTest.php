@@ -109,6 +109,6 @@ class CreateTest extends BaseTest
 
     public function tearDown()
     {
-        super::tearDown();
+        parent::tearDown();
     }
 }
