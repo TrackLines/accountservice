@@ -1,6 +1,9 @@
+services:
+    - mysql
+before_install:
+    - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
 language: php
 php:
     - '7.1'
 before_script: composer install
 script: composer test
-
