@@ -28,6 +28,8 @@ namespace TracklinesTest\Controller;
 
 use Zend\Stdlib\ArrayUtils;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Tracklines\Service\Config\Config;
+use Tracklines\Utils\Setup\Setup;
 
 /**
  * Class BaseTest
@@ -139,6 +141,18 @@ class BaseTest extends AbstractHttpControllerTestCase {
             "clientId" => 1,
         ];
 
+        $config     = new Config();
+        $dbConfig   = $config->getDatabaseConfig();
+
+        $dsn  = "mysql:";
+        $dsn .= ("dbname=" . $dbConfig->database . ";");
+        $dsn .= ("host=" . $dbConfig->address);
+
+        $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
+
+        $setup = new Setup($this->databaseConnection);
+        $setup->buildDatabase();
+
         parent::setUp();
     }
 
@@ -149,5 +163,22 @@ class BaseTest extends AbstractHttpControllerTestCase {
     {
         $result = true;
         $this->assertTrue($result);
+    }
+
+    public function tearDown()
+    {
+        $config     = new Config();
+        $dbConfig   = $config->getDatabaseConfig();
+
+        $dsn  = "mysql:";
+        $dsn .= ("dbname=" . $dbConfig->database . ";");
+        $dsn .= ("host=" . $dbConfig->address);
+
+        $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
+
+        $setup = new Setup($this->databaseConnection);
+        $setup->destroyDatabase();
+
+        parent::tearDown();
     }
 }

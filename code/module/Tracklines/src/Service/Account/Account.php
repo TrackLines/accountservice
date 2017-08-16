@@ -28,7 +28,6 @@ namespace Tracklines\Service\Account;
 use Tracklines\DataObjects\ContactDetails;
 use Tracklines\DataObjects\Credentials;
 use Tracklines\Service\Config\Config;
-use Tracklines\Utils\Setup\Setup;
 use Tracklines\DataObjects\Create;
 use Tracklines\DataObjects\Update;
 use Tracklines\DataObjects\Client;
@@ -58,9 +57,6 @@ class Account
         $dsn .= ("host=" . $dbConfig->address);
 
         $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
-
-        $setup = new Setup($this->databaseConnection);
-        $setup->buildDatabase();
     }
 
 

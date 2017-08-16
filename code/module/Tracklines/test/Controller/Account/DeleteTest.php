@@ -115,4 +115,9 @@ class DeleteTest extends BaseTest
         $this->dispatch("/account/-1", "DELETE");
         $this->assertResponseStatusCode(404);
     }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
 }

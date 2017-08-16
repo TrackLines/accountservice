@@ -180,4 +180,9 @@ class UpdateTest extends BaseTest
         $this->assertControllerClass("AccountController");
         $this->assertMatchedRouteName("account");
     }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
 }
