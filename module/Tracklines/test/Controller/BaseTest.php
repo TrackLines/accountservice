@@ -177,7 +177,7 @@ class BaseTest extends AbstractHttpControllerTestCase {
         $this->databaseConnection = new \PDO($dsn, $dbConfig->username, $dbConfig->password);
 
         $setup = new Setup($this->databaseConnection);
-        $setup->destroyDatabase();
+        //$setup->destroyDatabase();
 
         parent::tearDown();
     }
