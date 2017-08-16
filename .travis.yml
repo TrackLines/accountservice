@@ -1,6 +1,6 @@
 language: php
 php:
     - '7.1'
-before_script: composer install
-script: composer test
+before_script: cd code && composer install
+script: cd code && composer test
 
