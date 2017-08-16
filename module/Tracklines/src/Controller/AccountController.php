@@ -143,6 +143,7 @@ class AccountController extends AbstractRestfulController
     public function create($data)
     {
         $utilities = new Utilities();
+        $error = "";
 
         $tokenName = $this->getRequest()->getHeader("tokenName");
         if ($tokenName) {
@@ -177,14 +178,24 @@ class AccountController extends AbstractRestfulController
 
                             $account = new Account();
                             return new JsonModel($account->create($createObject));
+                        } else {
+                            $error = "Invalid Data";
                         }
+                    } else {
+                        $error = "Invalid Token";
                     }
+                } else {
+                    $error = "Token Error 1";
                 }
+            } else {
+                $error = "Token Error 2";
             }
+        } else {
+            $error = "Token Error 3";
         }
 
         $this->getResponse()->setStatusCode(400);
-        return $utilities->returnError("Invalid Token");
+        return $utilities->returnError($error);
     }
 
     /**

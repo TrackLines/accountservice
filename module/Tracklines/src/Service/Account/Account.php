@@ -100,7 +100,7 @@ class Account
             print_r($exception->getMessage());
         }
 
-        return (array)$returnData;
+        return $returnData->toArray();
     }
 
     /**
@@ -224,7 +224,7 @@ class Account
             print_r($exception->getMessage());
         }
 
-        return (array)$returnData;
+        return $returnData->toArray();
     }
 
     /**
@@ -266,10 +266,12 @@ class Account
             $keys->setApi($clientKeys['api']);
             $keys->setInterface($clientKeys['interface']);
             $returnData->setKeys($keys);
+
+            $returnData->setClientId($clientObject->getClientId());
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
 
-        return (array)$returnData;
+        return $returnData->toArray();
     }
 }
