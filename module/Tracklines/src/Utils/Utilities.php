@@ -199,4 +199,21 @@ class Utilities extends AbstractActionController
 
         return $valid;
     }
+
+    /**
+     * @param int $clientId
+     * @return string
+     */
+    public function generateKey(int $clientId) : string
+    {
+        $random = rand(($clientId % 5), ($clientId % 7));
+        $time   = time();
+        $endRes = ($time % $random);
+
+        $hash = password_hash($endRes, PASSWORD_BCRYPT);
+        $hash = substr($hash, 6);
+        $hash = str_replace(["$", ".", "/"], "", $hash);
+
+        return $hash;
+    }
 }

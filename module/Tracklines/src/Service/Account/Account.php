@@ -33,6 +33,7 @@ use Tracklines\DataObjects\Update;
 use Tracklines\DataObjects\Client;
 use Tracklines\DataObjects\Delete;
 use Tracklines\DataObjects\Keys;
+use Tracklines\Utils\Utilities;
 
 /**
  * Class Account
@@ -68,6 +69,7 @@ class Account
     public function create($createObject) : array
     {
         $returnData = new Client();
+        $utils      = new Utilities();
 
         try {
             $statement = $this->databaseConnection->prepare("INSERT INTO client (parentId, username, password) VALUES (:parentId, :username, :password)");
@@ -89,8 +91,8 @@ class Account
             $statement = $this->databaseConnection->prepare("INSERT INTO client_keys (clientId, api, interface) VALUES (:clientId, :api, :interface)");
             $statement->execute([
                 "clientId" => $clientId,
-                "api" => $this->generateKey($clientId),
-                "interface" => $this->generateKey($clientId),
+                "api" => $utils->generateKey($clientId),
+                "interface" => $utils->generateKey($clientId),
             ]);
 
             $returnData->setClientId($clientId);
@@ -207,7 +209,7 @@ class Account
                 $contactDetails->setContactNumber($clientContactData['number']);
                 $returnData->setContactDetails($contactDetails);
 
-                $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1").;
+                $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1");
                 $statement->execute([
                     "clientId" => $clientData['id'],
                 ]);
@@ -256,7 +258,7 @@ class Account
 
             $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1");
             $statement->execute([
-                "clientId" => $clientObject->getClientId();
+                "clientId" => $clientObject->getClientId(),
             ]);
             $clientKeys = $statement->fetch();
 

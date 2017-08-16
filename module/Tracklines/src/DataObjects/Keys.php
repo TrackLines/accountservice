@@ -32,17 +32,33 @@
 
  namespace Tracklines\DataObjects;
 
+ /**
+  * Class Keys
+  * @package Tracklines\DataObjects
+  */
  class Keys
  {
+     /**
+      * @var string
+      */
      private $api;
 
+     /**
+      * @var string
+      */
      private $interface;
 
+     /**
+      * @param string $api
+      */
      public function setApi(string $api)
      {
          $this->api = $api;
      }
 
+     /**
+      * @return string
+      */
      public function getApi() : string
      {
          if (isset($this->api)) {
@@ -52,11 +68,17 @@
          return "";
      }
 
+     /**
+      * @param string $interface
+      */
      public function setInterface(string $interface)
      {
          $this->interface = $interface;
      }
 
+     /**
+      * @return string
+      */
      public function getInterface() : string
      {
          if (isset($this->interface)) {

@@ -111,8 +111,8 @@ class Setup
             CREATE TABLE `client_keys` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `clientId` int(11) DEFAULT NULL,
-                `api_key` varchar(255) DEFAULT NULL,
-                `interface_key` varchar(255) DEFAULT NULL,
+                `api` varchar(255) DEFAULT NULL,
+                `interface` varchar(255) DEFAULT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             $statement->execute();
