@@ -128,7 +128,7 @@ class Setup
                 DROP TABLE `client`;");
             $statement->execute();
         } catch (\Exception $exception) {
-            print_r($exception->getMessage();
+            print_r($exception->getMessage());
         }
     }
 
