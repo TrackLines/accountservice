@@ -25,6 +25,7 @@ services:
       DATABASE_ADDRESS: database
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: tracks
+      DATABASE_DATABASE: account
       S3_REGION: invalid
       S3_KEY: invalid
       S3_SECRET: invalid
