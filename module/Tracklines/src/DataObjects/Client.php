@@ -165,5 +165,18 @@ class Client
         $this->active = $active;
     }
 
+    /**
+     * @return array
+     */
+    public function toArray() : array
+    {
+        $return = get_object_vars($this);
+        foreach ($return as $key => $value) {
+            if (gettype($value) === "object") {
+                $return[$key] = $value->toArray();
+            }
+        }
 
+        return $return;
+    }
 }
