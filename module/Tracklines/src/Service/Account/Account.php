@@ -32,6 +32,7 @@ use Tracklines\DataObjects\Create;
 use Tracklines\DataObjects\Update;
 use Tracklines\DataObjects\Client;
 use Tracklines\DataObjects\Delete;
+use Tracklines\DataObjects\Keys;
 
 /**
  * Class Account
@@ -83,6 +84,13 @@ class Account
                 "clientId"  => $clientId,
                 "email"     => $createObject->getContactDetails()->getEmail(),
                 "number"    => $createObject->getContactDetails()->getContactNumber(),
+            ]);
+
+            $statement = $this->databaseConnection->prepare("INSERT INTO client_keys (clientId, api, interface) VALUES (:clientId, :api, :interface)");
+            $statement->execute([
+                "clientId" => $clientId,
+                "api" => $this->generateKey($clientId),
+                "interface" => $this->generateKey($clientId),
             ]);
 
             $returnData->setClientId($clientId);
@@ -195,10 +203,20 @@ class Account
                 $clientContactData = $statement->fetch();
 
                 $contactDetails = new ContactDetails();
-
                 $contactDetails->setEmail($clientContactData['email']);
                 $contactDetails->setContactNumber($clientContactData['number']);
                 $returnData->setContactDetails($contactDetails);
+
+                $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1").;
+                $statement->execute([
+                    "clientId" => $clientData['id'],
+                ]);
+                $clientKeysData = $statement->fetch();
+
+                $keys = new Keys();
+                $keys->setApi($clientKeysData['api']);
+                $keys->setInterface($clientKeysData['interface']);
+                $returnData->setKeys($keys);
             }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -235,6 +253,17 @@ class Account
             $contactDetails->setEmail($clientContactData['email']);
             $contactDetails->setContactNumber($clientContactData['number']);
             $returnData->setContactDetails($contactDetails);
+
+            $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1");
+            $statement->execute([
+                "clientId" => $clientObject->getClientId();
+            ]);
+            $clientKeys = $statement->fetch();
+
+            $keys = new Keys();
+            $keys->setApi($clientKeys['api']);
+            $keys->setInterface($clientKeys['interface']);
+            $returnData->setKeys($keys);
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }

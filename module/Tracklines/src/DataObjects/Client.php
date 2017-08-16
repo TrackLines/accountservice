@@ -50,6 +50,11 @@ class Client
     private $contactDetails;
 
     /**
+     * @var Keys
+     */
+    private $keys;
+
+    /**
      * @var int
      */
     private $clientId;
@@ -94,6 +99,22 @@ class Client
     public function setContactDetails(ContactDetails $contactDetails)
     {
         $this->contactDetails = $contactDetails;
+    }
+
+    /**
+     * @return Keys
+     */
+    public function getKeys(): Keys
+    {
+        return $this->keys;
+    }
+
+    /**
+     * @param Keys $keys
+     */
+    public function setKeys(Keys $keys)
+    {
+        $this->keys = $keys;
     }
 
     /**
