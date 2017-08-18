@@ -23,42 +23,37 @@
  * SOFTWARE.
  */
 
-namespace Tracklines\Service\Token;
+/**
+ * Created by IntelliJ IDEA.
+ * User: hootonm
+ * Date: 11/08/2017
+ * Time: 13:13
+ */
 
-use Tracklines\Service\Config\Config;
+namespace TracklinesTest\Controller\Token;
+
+use TracklinesTest\Controller\BaseTest;
 
 /**
- * Class Validator
- * @package Tracklines\Service\Token
+ * Class AccountControllerTest
+ * @package TracklinesTest\Controller
  */
-class Validator extends ValidatorAbstract
+class ControllerTest extends BaseTest
 {
     /**
-     * Validator constructor.
+     *
      */
-    public function __construct()
+    public function setUp()
     {
-        $config = new Config();
-        $tokens = $config->getS3Config("tokens");
-        $this->setTokens($tokens);
+        parent::setUp();
     }
 
     /**
-     * @return bool
+     * Should return 404 invalid address
      */
-    public function validateToken() : bool
+    public function testInvalidRouteDidNotCrash()
     {
-        if ($token = $this->getToken()) {
-            if ($tokens = $this->getTokens()) {
-                if ($tokenValue = isset($tokens->{$token})) {
-                    $tokenValue = $tokens->{$token};
-                    if ($tokenValue === $this->getTokenValue()) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        $this->dispatch("/token/bob", "GET");
+        $this->assertResponseStatusCode(404);
     }
 }

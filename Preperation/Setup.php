@@ -23,9 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Tracklines\Utils\Setup;
-
-use Tracklines\Service\Config\Config;
+namespace Tracklines\Preperation;
 
 /**
  * Class Setup
@@ -61,6 +59,12 @@ class Setup
         $this->deleteClient();
         $this->deleteContact();
         $this->deleteKeys();
+    }
+
+    public function createDatabase($database)
+    {
+        $statement = $this->databaseConnection->prepare("CREATE DATABASE IF NOT EXISTS `" . $database . "`");
+        $statement->execute();
     }
 
     /**
@@ -112,7 +116,9 @@ class Setup
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `clientId` int(11) DEFAULT NULL,
                 `api` varchar(255) DEFAULT NULL,
+                `apiLastAccess` int(11) DEFAULT 0,
                 `interface` varchar(255) DEFAULT NULL,
+                `interfaceLastAccess` int(11) DEFAULT 0,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             $statement->execute();

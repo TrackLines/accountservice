@@ -30,13 +30,15 @@
  * Time: 13:13
  */
 
-namespace TracklinesTest\Controller;
+namespace TracklinesTest\Controller\Account;
+
+use TracklinesTest\Controller\BaseTest;
 
 /**
  * Class AccountControllerTest
  * @package TracklinesTest\Controller
  */
-class AccountControllerTest extends BaseTest
+class ControllerTest extends BaseTest
 {
     /**
      *

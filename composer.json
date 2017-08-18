@@ -42,7 +42,16 @@
     "development-disable": "zf-development-mode disable",
     "development-enable": "zf-development-mode enable",
     "development-status": "zf-development-mode status",
-    "test": "phpunit module",
+    "setupDb": "php Preperation/createDb.php",
+    "createTables": "php Preperation/createTables.php",
+    "destroyTables": "php Preperation/deleteTables.php",
+    "unittest": "phpunit module",
+    "test": [
+      "@composer setupDb",
+      "@composer createTables",
+      "@composer unittest",
+      "@composer destroyTables"
+    ],
     "serve": "php -S 0.0.0.0:80 -t public public/index.php"
   }
 }

@@ -44,9 +44,19 @@
      private $api;
 
      /**
+      * @var int
+      */
+     private $apiLastAccess;
+
+     /**
       * @var string
       */
      private $interface;
+
+     /**
+      * @var int
+      */
+     private $interfaceLastAccess;
 
      /**
       * @param string $api
@@ -94,5 +104,37 @@
      public function toArray() : array
      {
          return get_object_vars($this);
+     }
+
+     /**
+      * @return int
+      */
+     public function getApiLastAccess(): int
+     {
+         return $this->apiLastAccess;
+     }
+
+     /**
+      * @param int $apiLastAccess
+      */
+     public function setApiLastAccess(int $apiLastAccess)
+     {
+         $this->apiLastAccess = $apiLastAccess;
+     }
+
+     /**
+      * @return int
+      */
+     public function getInterfaceLastAccess(): int
+     {
+         return $this->interfaceLastAccess;
+     }
+
+     /**
+      * @param int $interfaceLastAccess
+      */
+     public function setInterfaceLastAccess(int $interfaceLastAccess)
+     {
+         $this->interfaceLastAccess = $interfaceLastAccess;
      }
  }

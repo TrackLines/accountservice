@@ -27,19 +27,15 @@
  * Created by IntelliJ IDEA.
  * User: hootonm
  * Date: 14/08/2017
- * Time: 13:34
+ * Time: 14:55
  */
 
-namespace TracklinesTest\Controller\Account;
+namespace TracklinesTest\Controller\Token;
 
-use Tracklines\Controller\AccountController;
+use Tracklines\Controller\TokenController;
 use TracklinesTest\Controller\BaseTest;
 
-/**
- * Class CreateTests
- * @package TracklinesTest\Controller\Account
- */
-class CreateTest extends BaseTest
+class RetrieveTest extends BaseTest
 {
     /**
      *
@@ -50,59 +46,84 @@ class CreateTest extends BaseTest
     }
 
     /**
-     * Should try and insert data valid token
+     * Should should not allow retrieve invalid number
      */
-    public function testCreateAccountValidToken()
+    public function testInvalidTokenDoesNotCrash()
     {
         $request = $this->getRequest();
         $headers = $request->getHeaders();
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenValue);
 
-        $this->dispatch("/account", "POST", $this->createTestData);
-        $this->dispatch("/account");
+        $this->dispatch("/token/-1", "GET");
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * Should not allow get list
+     */
+    public function testGetListCannotBeAccessed()
+    {
+        $this->dispatch("/token", "GET");
+        $this->assertResponseStatusCode(405);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
+    }
+
+    /**
+     * Should give data based on id
+     */
+    public function testGetTokenCanBeAccessed()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+        $headers->addHeaderLine("tokenType", "api");
+
+        $this->dispatch("/token/1", "GET");
         $this->assertResponseStatusCode(200);
         $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
     }
 
     /**
-     *
+     * Should give 400 because invalid token no data
      */
-    public function testCreateAccountInvalidData()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account", "POST", []);
-        $this->dispatch("/account");
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * This test should not try and insert data because invalid token
-     */
-    public function testCreateAccountInvalidToken()
+    public function testGetTokenCannotBeAccessed()
     {
         $request = $this->getRequest();
         $headers = $request->getHeaders();
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
 
-        $this->dispatch("/account", "POST", $this->createTestData);
-        $this->dispatch("/account");
+        $this->dispatch("/token/1", "GET");
         $this->assertResponseStatusCode(400);
         $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
+    }
+
+    /**
+     * Should give 400 with invalid token
+     */
+    public function testRetrieveTokenInvalidToken()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/token", "PATCH", $this->retrieveData);
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
     }
 }

@@ -27,19 +27,15 @@
  * Created by IntelliJ IDEA.
  * User: hootonm
  * Date: 14/08/2017
- * Time: 13:34
+ * Time: 14:57
  */
 
-namespace TracklinesTest\Controller\Account;
+namespace TracklinesTest\Controller\Token;
 
-use Tracklines\Controller\AccountController;
+use Tracklines\Controller\TokenController;
 use TracklinesTest\Controller\BaseTest;
 
-/**
- * Class CreateTests
- * @package TracklinesTest\Controller\Account
- */
-class CreateTest extends BaseTest
+class DeleteTest extends BaseTest
 {
     /**
      *
@@ -50,59 +46,71 @@ class CreateTest extends BaseTest
     }
 
     /**
-     * Should try and insert data valid token
+     *
      */
-    public function testCreateAccountValidToken()
+    public function testDeleteTokenValidToken()
     {
         $request = $this->getRequest();
         $headers = $request->getHeaders();
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenValue);
 
-        $this->dispatch("/account", "POST", $this->createTestData);
-        $this->dispatch("/account");
+        $content = http_build_query($this->deleteData);
+        $request->setContent($content);
+
+        $this->dispatch("/token", "DELETE");
         $this->assertResponseStatusCode(200);
         $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
     }
 
     /**
      *
      */
-    public function testCreateAccountInvalidData()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account", "POST", []);
-        $this->dispatch("/account");
-        $this->assertResponseStatusCode(400);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * This test should not try and insert data because invalid token
-     */
-    public function testCreateAccountInvalidToken()
+    public function testDeleteTokenInvalidToken()
     {
         $request = $this->getRequest();
         $headers = $request->getHeaders();
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
 
-        $this->dispatch("/account", "POST", $this->createTestData);
-        $this->dispatch("/account");
+        $content = http_build_query($this->deleteData);
+        $request->setContent($content);
+
+        $this->dispatch("/token", "DELETE");
         $this->assertResponseStatusCode(400);
         $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
+    }
+
+    /**
+     * should not allow delete list
+     */
+    public function testDeleteIdNotAllowed()
+    {
+        $this->dispatch("/token/1", "DELETE");
+        $this->assertResponseStatusCode(405);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(TokenController::class);
+        $this->assertControllerClass("TokenController");
+        $this->assertMatchedRouteName("token");
+    }
+
+    /**
+     * Should not allow to delete invalid numbers
+     */
+    public function testDeleteInvalidNumberDoesNotCrash()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/token/-1", "DELETE");
+        $this->assertResponseStatusCode(404);
     }
 }

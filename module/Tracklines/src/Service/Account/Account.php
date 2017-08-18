@@ -33,6 +33,7 @@ use Tracklines\DataObjects\Update;
 use Tracklines\DataObjects\Client;
 use Tracklines\DataObjects\Delete;
 use Tracklines\DataObjects\Keys;
+use Tracklines\Service\Token\Token;
 use Tracklines\Utils\Utilities;
 
 /**
@@ -209,15 +210,8 @@ class Account
                 $contactDetails->setContactNumber($clientContactData['number']);
                 $returnData->setContactDetails($contactDetails);
 
-                $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1");
-                $statement->execute([
-                    "clientId" => $clientData['id'],
-                ]);
-                $clientKeysData = $statement->fetch();
-
-                $keys = new Keys();
-                $keys->setApi($clientKeysData['api']);
-                $keys->setInterface($clientKeysData['interface']);
+                $token = new Token();
+                $keys = $token->getTokens($clientData['id']);
                 $returnData->setKeys($keys);
             }
         } catch (\Exception $exception) {
@@ -256,15 +250,8 @@ class Account
             $contactDetails->setContactNumber($clientContactData['number']);
             $returnData->setContactDetails($contactDetails);
 
-            $statement = $this->databaseConnection->prepare("SELECT api, interface FROM client_keys WHERE clientId = :clientId LIMIT 1");
-            $statement->execute([
-                "clientId" => $clientObject->getClientId(),
-            ]);
-            $clientKeys = $statement->fetch();
-
-            $keys = new Keys();
-            $keys->setApi($clientKeys['api']);
-            $keys->setInterface($clientKeys['interface']);
+            $token = new Token();
+            $keys = $token->getTokens($clientObject->getClientId());
             $returnData->setKeys($keys);
 
             $returnData->setClientId($clientObject->getClientId());

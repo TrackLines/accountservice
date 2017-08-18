@@ -32,7 +32,6 @@
 
 namespace TracklinesTest\Controller\Account;
 
-
 use Tracklines\Controller\AccountController;
 use TracklinesTest\Controller\BaseTest;
 
@@ -179,10 +178,5 @@ class UpdateTest extends BaseTest
         $this->assertControllerName(AccountController::class);
         $this->assertControllerClass("AccountController");
         $this->assertMatchedRouteName("account");
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
     }
 }

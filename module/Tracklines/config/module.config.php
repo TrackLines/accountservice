@@ -65,11 +65,24 @@ return [
                     ],
                 ],
             ],
+            'token' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/token[/:id]',
+                    'constraints' => [
+                        'id' => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\TokenController::class,
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
+            Controller\TokenController::class => InvokableFactory::class,
             Controller\AccountController::class => InvokableFactory::class,
         ],
     ],

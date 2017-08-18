@@ -207,6 +207,10 @@ class Utilities extends AbstractActionController
     public function generateKey(int $clientId) : string
     {
         $random = rand(($clientId % 5), ($clientId % 7));
+        if ($random <= 0) {
+            $random = 1;
+        }
+
         $time   = time();
         $endRes = ($time % $random);
 

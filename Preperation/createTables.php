@@ -23,42 +23,20 @@
  * SOFTWARE.
  */
 
-namespace Tracklines\Service\Token;
+namespace Tracklines\Preperation;
 
-use Tracklines\Service\Config\Config;
+include "Setup.php";
 
-/**
- * Class Validator
- * @package Tracklines\Service\Token
- */
-class Validator extends ValidatorAbstract
-{
-    /**
-     * Validator constructor.
-     */
-    public function __construct()
-    {
-        $config = new Config();
-        $tokens = $config->getS3Config("tokens");
-        $this->setTokens($tokens);
-    }
+$username   = getenv("DATABASE_USERNAME");
+$password   = getenv("DATABASE_PASSWORD");
+$address    = getenv("DATABASE_ADDRESS");
+$database   = getenv("DATABASE_DATABASE");
 
-    /**
-     * @return bool
-     */
-    public function validateToken() : bool
-    {
-        if ($token = $this->getToken()) {
-            if ($tokens = $this->getTokens()) {
-                if ($tokenValue = isset($tokens->{$token})) {
-                    $tokenValue = $tokens->{$token};
-                    if ($tokenValue === $this->getTokenValue()) {
-                        return true;
-                    }
-                }
-            }
-        }
+$dsn  = "mysql:";
+$dsn .= ("dbname=" . $database . ";");
+$dsn .= ("host=" . $address);
 
-        return false;
-    }
-}
+$databaseConnection = new \PDO($dsn, $username, $password);
+
+$setup = new Setup($databaseConnection);
+$setup->buildDatabase();

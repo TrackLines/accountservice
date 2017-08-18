@@ -55,6 +55,11 @@ class Config implements ConfigInterface
      */
     public function getS3Config(string $configName)
     {
+        // nothing has been set
+        if (getenv("S3_REGION") === "invalid") {
+            return null;
+        }
+
         try {
             $s3creds    = [
                 "region"        => getenv("S3_REGION"),

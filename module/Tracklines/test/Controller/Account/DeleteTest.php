@@ -32,10 +32,8 @@
 
 namespace TracklinesTest\Controller\Account;
 
-
 use Tracklines\Controller\AccountController;
 use TracklinesTest\Controller\BaseTest;
-use Zend\Stdlib\Parameters;
 
 class DeleteTest extends BaseTest
 {
@@ -114,10 +112,5 @@ class DeleteTest extends BaseTest
 
         $this->dispatch("/account/-1", "DELETE");
         $this->assertResponseStatusCode(404);
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
     }
 }

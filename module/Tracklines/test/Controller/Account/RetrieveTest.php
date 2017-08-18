@@ -32,7 +32,6 @@
 
 namespace TracklinesTest\Controller\Account;
 
-
 use Tracklines\Controller\AccountController;
 use TracklinesTest\Controller\BaseTest;
 
@@ -67,42 +66,6 @@ class RetrieveTest extends BaseTest
     {
         $this->dispatch("/account", "GET");
         $this->assertResponseStatusCode(405);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * Should give data based on id
-     */
-    public function testGetAccountCanBeAccessed()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenValue);
-
-        $this->dispatch("/account/1", "GET");
-        $this->assertResponseStatusCode(200);
-        $this->assertModuleName("tracklines");
-        $this->assertControllerName(AccountController::class);
-        $this->assertControllerClass("AccountController");
-        $this->assertMatchedRouteName("account");
-    }
-
-    /**
-     * Should give 400 because invalid token no data
-     */
-    public function testGetAccountCannotBeAccessed()
-    {
-        $request = $this->getRequest();
-        $headers = $request->getHeaders();
-        $headers->addHeaderLine("tokenName", $this->tokenName);
-        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
-
-        $this->dispatch("/account/1", "GET");
-        $this->assertResponseStatusCode(400);
         $this->assertModuleName("tracklines");
         $this->assertControllerName(AccountController::class);
         $this->assertControllerClass("AccountController");
@@ -145,8 +108,55 @@ class RetrieveTest extends BaseTest
         $this->assertMatchedRouteName("account");
     }
 
-    public function tearDown()
+    /**
+     * Should give data based on id
+     */
+    public function testGetAccountCanBeAccessed()
     {
-        parent::tearDown();
+        // Login to the token
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenValue);
+
+        $this->dispatch("/account", "PATCH", $this->retrieveData);
+
+        $response = $this->getResponse()->getContent();
+        if ($response) {
+            $response = \GuzzleHttp\json_decode($response);
+            $apiToken = $response->keys->api;
+
+            // get account based on token
+            $request = $this->getRequest();
+            $headers = $request->getHeaders();
+            $headers->addHeaderLine("tokenName", $this->tokenName);
+            $headers->addHeaderLine("tokenValue", $this->tokenValue);
+            $headers->addHeaderLine("apiToken", $apiToken);
+
+            $this->dispatch("/account/1", "GET");
+            $this->assertResponseStatusCode(200);
+            $this->assertModuleName("tracklines");
+            $this->assertControllerName(AccountController::class);
+            $this->assertControllerClass("AccountController");
+            $this->assertMatchedRouteName("account");
+        }
+    }
+
+    /**
+     * Should give 400 because invalid token no data
+     */
+    public function testGetAccountCannotBeAccessed()
+    {
+        $request = $this->getRequest();
+        $headers = $request->getHeaders();
+        $headers->addHeaderLine("tokenName", $this->tokenName);
+        $headers->addHeaderLine("tokenValue", $this->tokenInvalid);
+
+        $this->dispatch("/account/1", "GET");
+        $this->assertResponseStatusCode(400);
+        $this->assertModuleName("tracklines");
+        $this->assertControllerName(AccountController::class);
+        $this->assertControllerClass("AccountController");
+        $this->assertMatchedRouteName("account");
     }
 }

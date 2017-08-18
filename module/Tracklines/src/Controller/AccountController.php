@@ -40,6 +40,7 @@ use Tracklines\DataObjects\Delete;
 use Tracklines\DataObjects\Update;
 use Tracklines\Service\Account\Account;
 use Tracklines\Service\Config\Config;
+use Tracklines\Service\Token\Token;
 use Tracklines\Service\Token\Validator;
 use Tracklines\Utils\Utilities;
 use Zend\Mvc\Controller\AbstractRestfulController;
@@ -64,24 +65,31 @@ class AccountController extends AbstractRestfulController
         if ($tokenName) {
             $tokenValue = $this->getRequest()->getHeader("tokenValue");
             if ($tokenValue) {
-                $tokenNameValue = $tokenName->getFieldValue();
-                $tokenValueValue = $tokenValue->getFieldValue();
+                $apiToken = $this->getRequest()->getHeader("apiToken");
+                if ($apiToken) {
+                    $apiTokenValue = $apiToken->getFieldValue();
+                    $token = new Token();
+                    if ($token->validateApiToken($apiTokenValue, $id)) {
+                        $tokenNameValue = $tokenName->getFieldValue();
+                        $tokenValueValue = $tokenValue->getFieldValue();
 
-                $config = new Config();
-                $tokens = $config->getS3Config("tokens");
+                        $config = new Config();
+                        $tokens = $config->getS3Config("tokens");
 
-                if ($tokens) {
-                    $validator = new Validator();
-                    $validator->setTokens($tokens);
-                    $validator->setToken($tokenNameValue);
-                    $validator->setTokenValue($tokenValueValue);
-                    if ($validator->validateToken()) {
-                        $account = new Account();
+                        if ($tokens) {
+                            $validator = new Validator();
+                            $validator->setTokens($tokens);
+                            $validator->setToken($tokenNameValue);
+                            $validator->setTokenValue($tokenValueValue);
+                            if ($validator->validateToken()) {
+                                $account = new Account();
 
-                        $client = new Client();
-                        $client->setClientId($id);
+                                $client = new Client();
+                                $client->setClientId($id);
 
-                        return new JsonModel($account->get($client));
+                                return new JsonModel($account->get($client));
+                            }
+                        }
                     }
                 }
             }
