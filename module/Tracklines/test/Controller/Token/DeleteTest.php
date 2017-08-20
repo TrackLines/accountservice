@@ -55,7 +55,7 @@ class DeleteTest extends BaseTest
         $headers->addHeaderLine("tokenName", $this->tokenName);
         $headers->addHeaderLine("tokenValue", $this->tokenValue);
 
-        $content = http_build_query($this->deleteData);
+        $content = http_build_query($this->deleteTokendata);
         $request->setContent($content);
 
         $this->dispatch("/token", "DELETE");

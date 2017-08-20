@@ -116,8 +116,8 @@ class Account
                 "clientId" => $updateObject->getClientId(),
                 "username" => $updateObject->getOriginalCredentials()->getUsername(),
             ]);
-            $originalData = $statement->fetch();
-            if (password_verify($updateObject->getOriginalCredentials()->getPassword(), $originalData['password'])) {
+            $originalData = $statement->fetchObject();
+            if (password_verify($updateObject->getOriginalCredentials()->getPassword(), $originalData->password)) {
                 if ($updateObject->getNewCredentials()) {
                     if ($updateObject->getNewCredentials()->getPassword() !== "") {
                         $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password, active = :active WHERE id = :clientId LIMIT 1");
@@ -161,8 +161,8 @@ class Account
                 "clientId" => $updateObject->getClientId(),
                 "username" => $updateObject->getCredentials()->getUsername(),
             ]);
-            $originalData = $statement->fetch();
-            if (password_verify($updateObject->getCredentials()->getPassword(), $originalData['password'])) {
+            $originalData = $statement->fetchObject();
+            if (password_verify($updateObject->getCredentials()->getPassword(), $originalData->password)) {
                 $statement = $this->databaseConnection->prepare("UPDATE client SET active = :active WHERE clientId = :clientId LIMIT 1");
                 $statement->execute([
                     "clientId" => $updateObject->getClientId(),
@@ -192,26 +192,26 @@ class Account
             $statement->execute([
                 ":username" => $clientObject->getUsername(),
             ]);
-            $clientData = $statement->fetch();
+            $clientData = $statement->fetchObject();
 
-            if (password_verify($clientObject->getPassword(), $clientData['password'])) {
-                $returnData->setParentId($clientData['parentId']);
-                $returnData->setActive($clientData['active']);
-                $returnData->setClientId($clientData['id']);
+            if (password_verify($clientObject->getPassword(), $clientData->password)) {
+                $returnData->setParentId($clientData->parentId);
+                $returnData->setActive($clientData->active);
+                $returnData->setClientId($clientData->id);
 
                 $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
                 $statement->execute([
-                    "clientId" => $clientData['id'],
+                    "clientId" => $clientData->id,
                 ]);
-                $clientContactData = $statement->fetch();
+                $clientContactData = $statement->fetchObject();
 
                 $contactDetails = new ContactDetails();
-                $contactDetails->setEmail($clientContactData['email']);
-                $contactDetails->setContactNumber($clientContactData['number']);
+                $contactDetails->setEmail($clientContactData->email);
+                $contactDetails->setContactNumber($clientContactData->number);
                 $returnData->setContactDetails($contactDetails);
 
                 $token = new Token();
-                $keys = $token->getTokens($clientData['id']);
+                $keys = $token->getTokens($clientData->id);
                 $returnData->setKeys($keys);
             }
         } catch (\Exception $exception) {
@@ -234,20 +234,20 @@ class Account
             $statement->execute([
                 "clientId" => $clientObject->getClientId(),
             ]);
-            $clientData = $statement->fetch();
+            $clientData = $statement->fetchObject();
 
-            $returnData->setParentId($clientData['parentId']);
-            $returnData->setActive($clientData['active']);
+            $returnData->setParentId($clientData->parentId);
+            $returnData->setActive($clientData->active);
 
             $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
             $statement->execute([
                 "clientId" => $clientObject->getClientId(),
             ]);
-            $clientContactData = $statement->fetch();
+            $clientContactData = $statement->fetchObject();
 
             $contactDetails = new ContactDetails();
-            $contactDetails->setEmail($clientContactData['email']);
-            $contactDetails->setContactNumber($clientContactData['number']);
+            $contactDetails->setEmail($clientContactData->email);
+            $contactDetails->setContactNumber($clientContactData->number);
             $returnData->setContactDetails($contactDetails);
 
             $token = new Token();

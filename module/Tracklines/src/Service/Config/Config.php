@@ -76,7 +76,7 @@ class Config implements ConfigInterface
 
             $s3         = new S3Client($s3creds);
             $result     = $s3->getObject($s3file);
-            $body       = (string)$result['Body'];
+            $body       = $result->get('Body')->getContents();
             $bodyObj    = \GuzzleHttp\json_decode($body);
 
             return $bodyObj->{$configName};

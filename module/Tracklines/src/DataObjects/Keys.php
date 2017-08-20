@@ -39,6 +39,11 @@
  class Keys
  {
      /**
+      * @var int
+      */
+     private $id;
+
+     /**
       * @var string
       */
      private $api;
@@ -57,6 +62,22 @@
       * @var int
       */
      private $interfaceLastAccess;
+
+     /**
+      * @return int
+      */
+     public function getId(): int
+     {
+         return $this->id;
+     }
+
+     /**
+      * @param int $id
+      */
+     public function setId(int $id)
+     {
+         $this->id = $id;
+     }
 
      /**
       * @param string $api

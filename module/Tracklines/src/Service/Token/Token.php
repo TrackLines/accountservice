@@ -95,7 +95,8 @@ class Token
 
         try {
             $statement = $this->databaseConnection->prepare("
-              SELECT 
+              SELECT
+                id, 
                 api,
                 apiLastAccess, 
                 interface,
@@ -106,12 +107,13 @@ class Token
             $statement->execute([
                 "clientId" => $clientId,
             ]);
-            $clientKeys = $statement->fetch();
+            $clientKeys = $statement->fetchObject();
             if ($clientKeys) {
-                $keys->setApi($clientKeys['api']);
-                $keys->setApiLastAccess($clientKeys['apiLastAccess']);
-                $keys->setInterface($clientKeys['interface']);
-                $keys->setApiLastAccess($clientKeys['interfaceLastAccess']);
+                $keys->setId($clientKeys->id);
+                $keys->setApi($clientKeys->api);
+                $keys->setApiLastAccess($clientKeys->apiLastAccess);
+                $keys->setInterface($clientKeys->interface);
+                $keys->setApiLastAccess($clientKeys->interfaceLastAccess);
             }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -233,9 +235,9 @@ class Token
                 "clientId" => $clientId,
                 "token" => $token,
             ]);
-            $result = $statement->fetch();
+            $result = $statement->fetchObject();
             if ($result) {
-                return $result['TRUE'];
+                return $result->TRUE;
             }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -284,9 +286,9 @@ class Token
             $statement->execute([
                 "tokenId" => $tokenId,
             ]);
-            $results = $statement->fetch();
+            $results = $statement->fetchObject();
             if ($results) {
-                $this->setTokenValue($results['api']);
+                $this->setTokenValue($results->api);
             }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -307,9 +309,9 @@ class Token
             $statement->execute([
                 "tokenId" => $tokenId,
             ]);
-            $results = $statement->fetch();
+            $results = $statement->fetchObject();
             if ($results) {
-                $this->setTokenValue($results['interface']);
+                $this->setTokenValue($results->interface);
             }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
@@ -350,5 +352,26 @@ class Token
         }
 
         return $keys;
+    }
+
+    /**
+     * @param Keys $keys
+     * @return array
+     */
+    public function deleteToken(Keys $keys) : array
+    {
+        $returnData = new Keys();
+
+        try {
+            $statement = $this->databaseConnection->prepare("
+                DELETE FROM client_keys WHERE id = :id LIMIT 1");
+            $statement->execute([
+                "id" => $keys->getId(),
+            ]);
+        } catch (\Exception $exception) {
+            print_r($exception->getMessage());
+        }
+
+        return $returnData->toArray();
     }
 }

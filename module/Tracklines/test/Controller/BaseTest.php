@@ -140,6 +140,16 @@ class BaseTest extends AbstractHttpControllerTestCase {
             "clientId" => 1,
         ];
 
+        $this->deleteTokendata = [
+            "credentials" => [
+                "username" => "testUsername",
+                "password" => "testPassword",
+            ],
+            "keys" => [
+                "id" => 1,
+            ],
+        ];
+
         parent::setUp();
     }
 
