@@ -25,14 +25,13 @@
 
 namespace Tracklines\Service\Account;
 
-use Tracklines\DataObjects\ContactDetails;
+use \Tracklines\Service\ContactDetails\ContactDetails;
 use Tracklines\DataObjects\Credentials;
 use Tracklines\Service\Config\Config;
 use Tracklines\DataObjects\Create;
 use Tracklines\DataObjects\Update;
 use Tracklines\DataObjects\Client;
 use Tracklines\DataObjects\Delete;
-use Tracklines\DataObjects\Keys;
 use Tracklines\Service\Token\Token;
 use Tracklines\Utils\Utilities;
 
@@ -82,21 +81,16 @@ class Account
 
             $clientId = $this->databaseConnection->lastInsertId();
 
-            $statement = $this->databaseConnection->prepare("INSERT INTO client_contact (clientId, email, number) VALUES (:clientId, :email, :number)");
-            $statement->execute([
-                "clientId"  => $clientId,
-                "email"     => $createObject->getContactDetails()->getEmail(),
-                "number"    => $createObject->getContactDetails()->getContactNumber(),
-            ]);
+            $contactDetails = new ContactDetails();
+            $contactDetails->createContactDetails($clientId, $createObject->getContactDetails());
+            $returnData->setContactDetails($createObject->getContactDetails());
 
-            $statement = $this->databaseConnection->prepare("INSERT INTO client_keys (clientId, api, interface) VALUES (:clientId, :api, :interface)");
-            $statement->execute([
-                "clientId" => $clientId,
-                "api" => $utils->generateKey($clientId),
-                "interface" => $utils->generateKey($clientId),
-            ]);
+            $tokens = new Token();
+            $keys   = $tokens->createTokens($clientId);
+            $returnData->setKeys($keys);
 
             $returnData->setClientId($clientId);
+            $returnData->setParentId($createObject->getParentId());
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
@@ -130,13 +124,13 @@ class Account
                 }
 
                 if ($updateObject->getNewContactDetails()) {
+                    $contactDetails = new ContactDetails();
+
                     if ($updateObject->getNewContactDetails()->getEmail() !== "") {
-                        $statement = $this->databaseConnection->prepare("UPDATE client_contact SET email = :email, number = :number WHERE id = :clientId LIMIT 1");
-                        $statement->execute([
-                            "clientId" => $updateObject->getClientId(),
-                            "email" => $updateObject->getNewContactDetails()->getEmail(),
-                            "number" => $updateObject->getNewContactDetails()->getContactNumber(),
-                        ]);
+                        $contactDetails->updateEmail($updateObject->getClientId(), $updateObject->getNewContactDetails()->getEmail());
+                    }
+                    if ($updateObject->getNewContactDetails()->getContactNumber() !== "") {
+                        $contactDetails->updateNumber($updateObject->getClientId(), $updateObject->getNewContactDetails()->getContactNumber());
                     }
                 }
 
@@ -199,6 +193,7 @@ class Account
                 $returnData->setActive($clientData->active);
                 $returnData->setClientId($clientData->id);
 
+
                 $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
                 $statement->execute([
                     "clientId" => $clientData->id,
@@ -206,9 +201,8 @@ class Account
                 $clientContactData = $statement->fetchObject();
 
                 $contactDetails = new ContactDetails();
-                $contactDetails->setEmail($clientContactData->email);
-                $contactDetails->setContactNumber($clientContactData->number);
-                $returnData->setContactDetails($contactDetails);
+                $contactDetailsData = $contactDetails->getContactDetails($clientData->id);
+                $returnData->setContactDetails($contactDetailsData);
 
                 $token = new Token();
                 $keys = $token->getTokens($clientData->id);
@@ -239,16 +233,9 @@ class Account
             $returnData->setParentId($clientData->parentId);
             $returnData->setActive($clientData->active);
 
-            $statement = $this->databaseConnection->prepare("SELECT email, number FROM client_contact WHERE clientId = :clientId LIMIT 1");
-            $statement->execute([
-                "clientId" => $clientObject->getClientId(),
-            ]);
-            $clientContactData = $statement->fetchObject();
-
             $contactDetails = new ContactDetails();
-            $contactDetails->setEmail($clientContactData->email);
-            $contactDetails->setContactNumber($clientContactData->number);
-            $returnData->setContactDetails($contactDetails);
+            $clientContactData = $contactDetails->getContactDetails($clientObject->getClientId());
+            $returnData->setContactDetails($clientContactData);
 
             $token = new Token();
             $keys = $token->getTokens($clientObject->getClientId());

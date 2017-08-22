@@ -73,22 +73,16 @@ class AccountController extends AbstractRestfulController
                         $tokenNameValue = $tokenName->getFieldValue();
                         $tokenValueValue = $tokenValue->getFieldValue();
 
-                        $config = new Config();
-                        $tokens = $config->getS3Config("tokens");
+                        $validator = new Validator();
+                        $validator->setToken($tokenNameValue);
+                        $validator->setTokenValue($tokenValueValue);
+                        if ($validator->validateToken()) {
+                            $account = new Account();
 
-                        if ($tokens) {
-                            $validator = new Validator();
-                            $validator->setTokens($tokens);
-                            $validator->setToken($tokenNameValue);
-                            $validator->setTokenValue($tokenValueValue);
-                            if ($validator->validateToken()) {
-                                $account = new Account();
+                            $client = new Client();
+                            $client->setClientId($id);
 
-                                $client = new Client();
-                                $client->setClientId($id);
-
-                                return new JsonModel($account->get($client));
-                            }
+                            return new JsonModel($account->get($client));
                         }
                     }
                 }
@@ -116,24 +110,18 @@ class AccountController extends AbstractRestfulController
                 $tokenNameValue = $tokenName->getFieldValue();
                 $tokenValueValue = $tokenValue->getFieldValue();
 
-                $config = new Config();
-                $tokens = $config->getS3Config("tokens");
+                $validator = new Validator();
+                $validator->setToken($tokenNameValue);
+                $validator->setTokenValue($tokenValueValue);
+                if ($validator->validateToken()) {
+                    $account    = new Account();
+                    $dataObject = $utilities->convertToObject($data);
 
-                if ($tokens) {
-                    $validator = new Validator();
-                    $validator->setTokens($tokens);
-                    $validator->setToken($tokenNameValue);
-                    $validator->setTokenValue($tokenValueValue);
-                    if ($validator->validateToken()) {
-                        $account    = new Account();
-                        $dataObject = $utilities->convertToObject($data);
+                    $retrieve = new Credentials();
+                    $retrieve->setUsername($dataObject->username);
+                    $retrieve->setPassword($dataObject->password);
 
-                        $retrieve = new Credentials();
-                        $retrieve->setUsername($dataObject->username);
-                        $retrieve->setPassword($dataObject->password);
-
-                        return new JsonModel($account->retrieve($retrieve));
-                    }
+                    return new JsonModel($account->retrieve($retrieve));
                 }
             }
         }
@@ -160,37 +148,29 @@ class AccountController extends AbstractRestfulController
                 $tokenNameValue     = $tokenName->getFieldValue();
                 $tokenValueValue    = $tokenValue->getFieldValue();
 
-                $config = new Config();
-                $tokens = $config->getS3Config("tokens");
+                $validator = new Validator();
+                $validator->setToken($tokenNameValue);
+                $validator->setTokenValue($tokenValueValue);
+                if ($validator->validateToken()) {
+                    $dataObject = $utilities->convertToObject($data);
+                    if ($utilities->validCreateDataObject($dataObject)) {
+                        $credentials = new Credentials();
+                        $credentials->setUsername($dataObject->credentials->username);
+                        $credentials->setPassword($dataObject->credentials->password);
 
-                if ($tokens) {
-                    $validator = new Validator();
-                    $validator->setTokens($tokens);
-                    $validator->setToken($tokenNameValue);
-                    $validator->setTokenValue($tokenValueValue);
-                    if ($validator->validateToken()) {
-                        $dataObject = $utilities->convertToObject($data);
-                        if ($utilities->validCreateDataObject($dataObject)) {
-                            $credentials = new Credentials();
-                            $credentials->setUsername($dataObject->credentials->username);
-                            $credentials->setPassword($dataObject->credentials->password);
+                        $contactDetails = new ContactDetails();
+                        $contactDetails->setContactNumber($dataObject->contactDetails->number);
+                        $contactDetails->setEmail($dataObject->contactDetails->email);
 
-                            $contactDetails = new ContactDetails();
-                            $contactDetails->setContactNumber($dataObject->contactDetails->number);
-                            $contactDetails->setEmail($dataObject->contactDetails->email);
+                        $createObject = new Create();
+                        $createObject->setContactDetails($contactDetails);
+                        $createObject->setCredentials($credentials);
+                        $createObject->setParentId($dataObject->parentId);
 
-                            $createObject = new Create();
-                            $createObject->setContactDetails($contactDetails);
-                            $createObject->setCredentials($credentials);
-                            $createObject->setParentId($dataObject->parentId);
-
-                            $account = new Account();
-                            return new JsonModel($account->create($createObject));
-                        } else {
-                            $error = "Invalid Data";
-                        }
+                        $account = new Account();
+                        return new JsonModel($account->create($createObject));
                     } else {
-                        $error = "Invalid Token";
+                        $error = "Invalid Data";
                     }
                 } else {
                     $error = "Token Error 1";
@@ -223,63 +203,57 @@ class AccountController extends AbstractRestfulController
                 $tokenNameValue     = $tokenName->getFieldValue();
                 $tokenValueValue    = $tokenValue->getFieldValue();
 
-                $config = new Config();
-                $tokens = $config->getS3Config("tokens");
+                $validator = new Validator();
+                $validator->setToken($tokenNameValue);
+                $validator->setTokenValue($tokenValueValue);
+                if ($validator->validateToken()) {
+                    $dataObject = $utilities->convertToObject($data);
+                    if ($utilities->validUpdateDataObject($dataObject)) {
+                        $updateObject = new Update();
+                        $account = new Account();
 
-                if ($tokens) {
-                    $validator = new Validator();
-                    $validator->setTokens($tokens);
-                    $validator->setToken($tokenNameValue);
-                    $validator->setTokenValue($tokenValueValue);
-                    if ($validator->validateToken()) {
-                        $dataObject = $utilities->convertToObject($data);
-                        if ($utilities->validUpdateDataObject($dataObject)) {
-                            $updateObject = new Update();
-                            $account = new Account();
+                        // id
+                        $updateObject->setClientId($id);
 
-                            // id
-                            $updateObject->setClientId($id);
+                        // active
+                        $updateObject->setActive($dataObject->active);
 
-                            // active
-                            $updateObject->setActive($dataObject->active);
-
-                            // New Credentials
-                            $newCredentials     = new Credentials();
-                            if (isset($dataObject->newCredentials)) {
-                                if (isset($dataObject->newCredentails->password)) {
-                                    $newCredentials->setPassword($dataObject->newCredentails->password);
-                                }
-                                $updateObject->setNewCredentials($newCredentials);
+                        // New Credentials
+                        $newCredentials     = new Credentials();
+                        if (isset($dataObject->newCredentials)) {
+                            if (isset($dataObject->newCredentails->password)) {
+                                $newCredentials->setPassword($dataObject->newCredentails->password);
                             }
-
-                            // New Contact Details
-                            $newContactDetails  = new ContactDetails();
-                            if (isset($dataObject->newContactDetails)) {
-                                if (isset($dataObject->newContactDetails->email)) {
-                                    $newContactDetails->setEmail($dataObject->newContactDetails->email);
-                                }
-
-                                if (isset($dataObject->newContactDetails->number)) {
-                                    $newContactDetails->setContactNumber($dataObject->newContactDetails->number);
-                                }
-                                $updateObject->setNewContactDetails($newContactDetails);
-                            }
-
-                            // Old Credentials
-                            $oldCredentials     = new Credentials();
-                            $oldCredentials->setUsername($dataObject->originalCredentials->username);
-                            $oldCredentials->setPassword($dataObject->originalCredentials->password);
-                            $updateObject->setOriginalCredentials($oldCredentials);
-
-                            if ($account->update($updateObject)) {
-                                return new JsonModel([
-                                    "updated" => true
-                                ]);
-                            }
-                        } else {
-                            $this->getResponse()->setStatusCode(400);
-                            return $utilities->returnError("Wrong Data");
+                            $updateObject->setNewCredentials($newCredentials);
                         }
+
+                        // New Contact Details
+                        $newContactDetails  = new ContactDetails();
+                        if (isset($dataObject->newContactDetails)) {
+                            if (isset($dataObject->newContactDetails->email)) {
+                                $newContactDetails->setEmail($dataObject->newContactDetails->email);
+                            }
+
+                            if (isset($dataObject->newContactDetails->number)) {
+                                $newContactDetails->setContactNumber($dataObject->newContactDetails->number);
+                            }
+                            $updateObject->setNewContactDetails($newContactDetails);
+                        }
+
+                        // Old Credentials
+                        $oldCredentials     = new Credentials();
+                        $oldCredentials->setUsername($dataObject->originalCredentials->username);
+                        $oldCredentials->setPassword($dataObject->originalCredentials->password);
+                        $updateObject->setOriginalCredentials($oldCredentials);
+
+                        if ($account->update($updateObject)) {
+                            return new JsonModel([
+                                "updated" => true
+                            ]);
+                        }
+                    } else {
+                        $this->getResponse()->setStatusCode(400);
+                        return $utilities->returnError("Wrong Data");
                     }
                 }
             }
@@ -316,39 +290,32 @@ class AccountController extends AbstractRestfulController
                 $tokenNameValue     = $tokenName->getFieldValue();
                 $tokenValueValue    = $tokenValue->getFieldValue();
 
-                $config = new Config();
-                $tokens = $config->getS3Config("tokens");
+                $validator = new Validator();
+                $validator->setToken($tokenNameValue);
+                $validator->setTokenValue($tokenValueValue);
+                if ($validator->validateToken()) {
+                    $dataObject = $utilities->convertToObject($data);
+                    $account = new Account();
 
-                if ($tokens) {
-                    $validator = new Validator();
-                    $validator->setTokens($tokens);
-                    $validator->setToken($tokenNameValue);
-                    $validator->setTokenValue($tokenValueValue);
-                    if ($validator->validateToken()) {
-                        $dataObject = $utilities->convertToObject($data);
-                        $account = new Account();
+                    $client = new Delete();
+                    $client->setClientId($dataObject->clientId);
+                    $client->setActive(false);
 
-                        $client = new Delete();
-                        $client->setClientId($dataObject->clientId);
-                        $client->setActive(false);
+                    $credentials = new Credentials();
+                    $credentials->setPassword($dataObject->credentials->password);
+                    $credentials->setUsername($dataObject->credentials->username);
+                    $client->setCredentials($credentials);
 
-                        $credentials = new Credentials();
-                        $credentials->setPassword($dataObject->credentials->password);
-                        $credentials->setUsername($dataObject->credentials->username);
-                        $client->setCredentials($credentials);
-
-                        if ($account->safeDelete($client)) {
-                            return new JsonModel([
-                                "updated" => true
-                            ]);
-                        } else {
-                            $this->getResponse()->setStatusCode(400);
-                            return $utilities->returnError("Wrong Data");
-                        }
+                    if ($account->safeDelete($client)) {
+                        return new JsonModel([
+                            "updated" => true
+                        ]);
+                    } else {
+                        $this->getResponse()->setStatusCode(400);
+                        return $utilities->returnError("Wrong Data");
                     }
                 }
             }
-
         }
 
         $this->getResponse()->setStatusCode(400);
