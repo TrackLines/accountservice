@@ -118,8 +118,8 @@ class AccountController extends AbstractRestfulController
                     $dataObject = $utilities->convertToObject($data);
 
                     $retrieve = new Credentials();
-                    $retrieve->setUsername($dataObject->username);
-                    $retrieve->setPassword($dataObject->password);
+                    $retrieve->setUsername($dataObject->credentials->username);
+                    $retrieve->setPassword($dataObject->credentials->password);
 
                     return new JsonModel($account->retrieve($retrieve));
                 }

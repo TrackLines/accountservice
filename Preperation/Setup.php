@@ -80,7 +80,8 @@ class Setup
             `username` varchar(50) DEFAULT NULL,
             `password` varchar(255) DEFAULT NULL,
             `active` bool DEFAULT '1',
-            PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `clientUsername` (`parentId`,`username`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
             $statement->execute();
         } catch (\Exception $exception) {

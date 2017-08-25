@@ -160,6 +160,7 @@ class Token
                 "interfaceLastAccess" => $time,
             ]);
 
+            $keys->setId($this->databaseConnection->lastInsertId());
             $keys->setApi($api);
             $keys->setInterface($interface);
             $keys->setApiLastAccess($time);
@@ -363,11 +364,16 @@ class Token
         $returnData = new Keys();
 
         try {
-            $statement = $this->databaseConnection->prepare("
-                DELETE FROM client_keys WHERE id = :id LIMIT 1");
+            $statement = $this->databaseConnection->prepare("SELECT clientId FROM client_keys WHERE id = :id LIMIT 1");
             $statement->execute([
                 "id" => $keys->getId(),
             ]);
+            $data = $statement->fetchObject();
+            if ($data) {
+                $keyId = $data->clientId;
+
+                $this->updateToken($keyId);
+            }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }

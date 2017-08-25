@@ -69,28 +69,28 @@ class Account
     public function create($createObject) : array
     {
         $returnData = new Client();
-        $utils      = new Utilities();
 
         try {
             $statement = $this->databaseConnection->prepare("INSERT INTO client (parentId, username, password) VALUES (:parentId, :username, :password)");
-            $statement->execute([
+            $executed = $statement->execute([
                 "parentId" => $createObject->getParentId(),
                 "username" => $createObject->getCredentials()->getUsername(),
                 "password" => password_hash($createObject->getCredentials()->getPassword(), PASSWORD_DEFAULT),
             ]);
+            if ($executed) {
+                $clientId = $this->databaseConnection->lastInsertId();
 
-            $clientId = $this->databaseConnection->lastInsertId();
+                $contactDetails = new ContactDetails();
+                $contactDetails->createContactDetails($clientId, $createObject->getContactDetails());
+                $returnData->setContactDetails($createObject->getContactDetails());
 
-            $contactDetails = new ContactDetails();
-            $contactDetails->createContactDetails($clientId, $createObject->getContactDetails());
-            $returnData->setContactDetails($createObject->getContactDetails());
+                $tokens = new Token();
+                $keys = $tokens->createTokens($clientId);
+                $returnData->setKeys($keys);
 
-            $tokens = new Token();
-            $keys   = $tokens->createTokens($clientId);
-            $returnData->setKeys($keys);
-
-            $returnData->setClientId($clientId);
-            $returnData->setParentId($createObject->getParentId());
+                $returnData->setClientId($clientId);
+                $returnData->setParentId($createObject->getParentId());
+            }
         } catch (\Exception $exception) {
             print_r($exception->getMessage());
         }
@@ -114,10 +114,9 @@ class Account
             if (password_verify($updateObject->getOriginalCredentials()->getPassword(), $originalData->password)) {
                 if ($updateObject->getNewCredentials()) {
                     if ($updateObject->getNewCredentials()->getPassword() !== "") {
-                        $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password, active = :active WHERE id = :clientId LIMIT 1");
+                        $statement = $this->databaseConnection->prepare("UPDATE client SET password = :password WHERE id = :clientId LIMIT 1");
                         $statement->execute([
                             "clientId" => $updateObject->getClientId(),
-                            "active" => $updateObject->isActive(),
                             "password" => password_hash($updateObject->getNewCredentials()->getPassword(), PASSWORD_DEFAULT),
                         ]);
                     }
@@ -157,12 +156,11 @@ class Account
             ]);
             $originalData = $statement->fetchObject();
             if (password_verify($updateObject->getCredentials()->getPassword(), $originalData->password)) {
-                $statement = $this->databaseConnection->prepare("UPDATE client SET active = :active WHERE clientId = :clientId LIMIT 1");
+                $statement = $this->databaseConnection->prepare("UPDATE client SET active = :active WHERE id = :clientId LIMIT 1");
                 $statement->execute([
                     "clientId" => $updateObject->getClientId(),
                     "active" => $updateObject->isActive(),
                 ]);
-
                 return true;
             }
         } catch (\Exception $exception) {

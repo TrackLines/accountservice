@@ -123,8 +123,8 @@ class RetrieveTest extends BaseTest
 
         $response = $this->getResponse()->getContent();
         if ($response) {
-            $response = \GuzzleHttp\json_decode($response);
-            $apiToken = $response->keys->api;
+            $responseParsed = \GuzzleHttp\json_decode($response);
+            $apiToken = $responseParsed->keys->api;
 
             // get account based on token
             $request = $this->getRequest();

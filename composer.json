@@ -52,6 +52,12 @@
       "@composer unittest",
       "@composer destroyTables"
     ],
+    "brokenTest": [
+      "@composer setupDb",
+      "@composer destroyTables",
+      "@composer createTables",
+      "@composer unittest"
+    ],
     "serve": "php -S 0.0.0.0:80 -t public public/index.php"
   }
 }

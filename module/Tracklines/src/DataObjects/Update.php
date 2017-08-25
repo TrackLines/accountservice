@@ -67,7 +67,7 @@ class Update
     /**
      * @var bool
      */
-    private $active;
+    private $active = false;
 
     /**
      * @return Credentials
