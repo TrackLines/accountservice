@@ -71,7 +71,7 @@ class Account
         $returnData = new Client();
 
         try {
-            $statement = $this->databaseConnection->prepare("INSERT INTO client (parentId, username, password) VALUES (:parentId, :username, :password)");
+            $statement = $this->databaseConnection->prepare("INSERT INTO client (parentId, username, password, active) VALUES (:parentId, :username, :password, true)");
             $executed = $statement->execute([
                 "parentId" => $createObject->getParentId(),
                 "username" => $createObject->getCredentials()->getUsername(),
