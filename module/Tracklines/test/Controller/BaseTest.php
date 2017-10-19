@@ -77,6 +77,11 @@ class BaseTest extends AbstractHttpControllerTestCase {
     protected $deleteData;
 
     /**
+     * @var array
+     */
+    protected $deleteTokenData;
+
+    /**
      *
      */
     public function setUp()
@@ -142,7 +147,7 @@ class BaseTest extends AbstractHttpControllerTestCase {
             "clientId" => 1,
         ];
 
-        $this->deleteTokendata = [
+        $this->deleteTokenData = [
             "credentials" => [
                 "username" => "testUsername",
                 "password" => "testPassword",
