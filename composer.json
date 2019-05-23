@@ -24,7 +24,7 @@
   "require": {
     "php": ">=7.0",
     "guzzlehttp/guzzle": "6.3",
-    "phpunit/phpunit": "6.3",
+    "phpunit/phpunit": "6.5.14",
     "aws/aws-sdk-php": "3.32.6",
     "zendframework/zend-component-installer": "1.0",
     "zendframework/zend-mvc": "3.0.1",
