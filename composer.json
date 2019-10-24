@@ -25,7 +25,7 @@
     "php": ">=7.0",
     "guzzlehttp/guzzle": "6.3",
     "phpunit/phpunit": "6.3",
-    "aws/aws-sdk-php": "3.32.6",
+    "aws/aws-sdk-php": "3.112.27",
     "zendframework/zend-component-installer": "1.0",
     "zendframework/zend-mvc": "3.0.1",
     "zfcampus/zf-development-mode": "3.0",
