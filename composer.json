@@ -23,7 +23,7 @@
   },
   "require": {
     "php": ">=7.0",
-    "guzzlehttp/guzzle": "6.3",
+    "guzzlehttp/guzzle": "6.5.2",
     "phpunit/phpunit": "6.3",
     "aws/aws-sdk-php": "3.32.6",
     "zendframework/zend-component-installer": "1.0",
